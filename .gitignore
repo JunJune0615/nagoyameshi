@@ -1,0 +1,7 @@
+myvenv
+.vscode
+__pycache__
+*.pyc
+.DS_Store
+media_local
+.env
