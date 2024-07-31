@@ -16,6 +16,9 @@ import environ
 from decouple import config
 import dj_database_url
 
+#　USERモデルではなく、カスタムモデルを使用することを宣言
+AUTH_USER_MODEL = 'nagoyameshi.CustomUser'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -35,7 +38,6 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'nagoyameshi',
 ]
 
