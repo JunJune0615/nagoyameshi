@@ -1,17 +1,64 @@
 from django.db import models
-from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=200)
+    category_name = models.CharField(verbose_name="カテゴリ名",max_length=200)
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
     update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
 
     def __str__(self):
         return self.category_name
 
+class MyUserManager(BaseUserManager):
+    def create_user(self, username, email, password, **extra_fields):
+        if not username:
+            raise ValueError('Users must have an username')
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            user_name=username,
+            email=self.normalize_email(email),
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password):
+        user = self.create_user(
+            username=username,
+            email=self.normalize_email(email),
+            password=password,
+        )
+        user.is_admin=True
+        user.is_staff=True
+        user.is_superuser=True
+        user.save(using=self._db)
+        return user
+
+class CustomUser(AbstractBaseUser):
+    username = models.CharField(verbose_name='名前', max_length=100)
+    email = models.CharField(verbose_name='メールアドレス', unique=True, max_length=100)
+    password = models.CharField(verbose_name='パスワード', max_length=100)
+    vip_member = models.BooleanField("有料会員ステータス", default=False)
+    create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
+    update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
+    #AbstractBaseUserにはMyUserManagerが必要
+    objects = MyUserManager()
+
+    #一意の識別子として使用されます
+    USERNAME_FIELD = 'email'
+    #ユーザーを作成するときにプロンプ​​トに表示されるフィールド名のリストです。
+    REQUIRED_FIELDS = ['username']
+
     
 class Restaurant(models.Model):
-    restaurant_name = models.CharField(max_length=200,verbose_name="店舗名")
+    restaurant_name = models.CharField(verbose_name="店舗名", max_length=200)
     budget = models.PositiveIntegerField(verbose_name="予算")
     information = models.TextField(verbose_name="店舗説明")
     img = models.ImageField(verbose_name="店舗画像" , blank=True, default='noImage.png')
