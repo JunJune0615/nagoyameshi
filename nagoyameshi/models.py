@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class Category(models.Model):
     category_name = models.CharField(verbose_name="カテゴリ名",max_length=200)
@@ -17,7 +17,7 @@ class MyUserManager(BaseUserManager):
             raise ValueError('Users must have an email address')
 
         user = self.model(
-            user_name=username,
+            username=username,
             email=self.normalize_email(email),
             **extra_fields
         )
@@ -37,7 +37,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(verbose_name='名前', max_length=100)
     email = models.CharField(verbose_name='メールアドレス', unique=True, max_length=100)
     password = models.CharField(verbose_name='パスワード', max_length=100)
