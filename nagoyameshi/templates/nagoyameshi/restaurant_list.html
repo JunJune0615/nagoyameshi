@@ -15,10 +15,10 @@
                 <th>価格</th>
             </tr>
         </thead>
-        {% for product in object_list %}
+        {% for restaurant in object_list %}
         <tr>
-            <td>{{ product.name }}</td>
-            <td>{{ product.price }} 円</td>
+            <td>{{ restaurant.name }}</td>
+            <td>{{ restaurant.price }} 円</td>
         </tr>
         {% endfor %}
     </table>
