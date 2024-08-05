@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 from .models import CustomUser
 
@@ -9,6 +9,9 @@ class SignUpForm(UserCreationForm):
         fields = (
             "username",
             "email",
-            "password",
         )
 
+# ログインフォームを追加
+class LoginFrom(AuthenticationForm):
+    class Meta:
+        model = CustomUser
