@@ -69,7 +69,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -149,3 +149,5 @@ MEDIA_ROOT = BASE_DIR / 'media_local'
 #　USERモデルではなく、カスタムモデルを使用することを宣言
 AUTH_USER_MODEL = 'nagoyameshi.CustomUser'
 
+LOGIN_REDIRECT_URL = "nagoyameshi:index"
+LOGOUT_REDIRECT_URL = "nagoyameshi:login"
