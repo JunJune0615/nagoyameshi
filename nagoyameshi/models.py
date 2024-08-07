@@ -67,6 +67,7 @@ class Restaurant(models.Model):
     img = models.ImageField(verbose_name="店舗画像" , blank=True, default='noImage.png')
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
     update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+    postal_number = models.CharField(verbose_name="郵便番号", max_length=100, null=True, blank=True)
     address = models.CharField(verbose_name="住所", max_length=100, null=True, blank=True)
     tel = models.CharField(verbose_name="電話番号", max_length=100, null=True, blank=True)
     open_time = models.TimeField(verbose_name="開店時間", default="09:00:00")
