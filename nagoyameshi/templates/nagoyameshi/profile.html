@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}ユーザー情報{% endblock %}
+{% block content %}
+<div class="ui grid stackable">
+    <div class="eleven wide column">
+        <div class="ui breadcrumb">
+            <a class="active section">ユーザー情報</a>
+        </div>
+        <div class="ui segment">
+            <div class="content">
+                <div class="header"><h3>ユーザー情報</h3></div>
+                <div class="ui divided bulleted list">
+                    <div class="item">E-mail：{{user.email}}</div>
+                    <div class="item">名前：{{user.username}}</div>
+                </div>
+            </div>
+        </div>
+        <a class="ui button" href="">登録情報変更</a>
+        <a class="ui button" href="">パスワード変更</a>
+    </div>
+</div>
+{% endblock %}
