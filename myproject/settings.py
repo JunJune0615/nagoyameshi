@@ -49,6 +49,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'nagoyameshi',
+
+    # ログイン機能のためのインストール
+    'django.contrib.sites', # 追加
+    'allauth', # 追加
+    'allauth.account', # 追加
+    'allauth.socialaccount', # 追加
 ]
 
 MIDDLEWARE = [
@@ -62,6 +68,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    #　ログイン機能実装の際に追加（エラー文をもとに）
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -149,5 +158,23 @@ MEDIA_ROOT = BASE_DIR / 'media_local'
 #　USERモデルではなく、カスタムモデルを使用することを宣言
 AUTH_USER_MODEL = 'nagoyameshi.CustomUser'
 
-LOGIN_REDIRECT_URL = "nagoyameshi:index"
-LOGOUT_REDIRECT_URL = "nagoyameshi:login"
+#ログイン関連
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', #デフォルトの認証基盤 
+    'allauth.account.auth_backends.AuthenticationBackend' # メールアドレスとパスワードの両方を用いて認証するために必要
+)
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email' # メールアドレス（とパスワードで）認証する
+ACCOUNT_USERNAME_REQUIRED = True # サインアップ（ユーザー登録）の時にユーザーネームを尋ねる
+ACCOUNT_EMAIL_REQUIRED = True # サインアップ（ユーザー登録）の時にメールアドレスを尋ねる
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # メール検証を必須とする
+
+LOGIN_URL = '/account/login/' # ログインURLの設定
+ACCOUNT_LOGOUT_REDIRECT_URL = '/account/login/' #　ログアウト後のリダイレクト先
+
+LOGIN_REDIRECT_URL = "/profile"
+LOGOUT_REDIRECT_URL = "/account/login/"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

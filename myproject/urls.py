@@ -23,9 +23,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("nagoyameshi.urls")),
-    path('', views.TopView.as_view(), name="top"),
-    path('crud/', views.ProductListView.as_view(), name="list"),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
