@@ -51,6 +51,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
+    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_card_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
+
     #AbstractBaseUserにはMyUserManagerが必要
     objects = MyUserManager()
 
@@ -64,7 +68,7 @@ class Restaurant(models.Model):
     restaurant_name = models.CharField(verbose_name="店舗名", max_length=200)
     budget = models.PositiveIntegerField(verbose_name="予算")
     information = models.TextField(verbose_name="店舗説明")
-    img = models.ImageField(verbose_name="店舗画像" , blank=True, default='noImage.png')
+    img = models.ImageField(verbose_name="店舗画像" , blank=True, null=True)
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
     update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
     postal_number = models.CharField(verbose_name="郵便番号", max_length=100, null=True, blank=True)

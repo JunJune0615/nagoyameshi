@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1 class="center">クレジット登録</h1>
+
+    <div style="width: 600px; margin: auto;">
+        <form action="{% url 'credit-register' %}" method="POST" id="payment-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <label for="card-element">
+                  クレジット・デビットカード番号
+                </label>
+                <div id="card-element">
+                  <!-- Stripe Element がここに入ります。 -->
+                </div>
+
+                <!-- Element のエラーを入れます。 -->
+                <div id="card-errors" role="alert"></div>
+            </div>
+
+            <button>お支払い</button>
+        </form>
+    </div>
+
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+        const elements = stripe.elements();
+        const style = {
+          base: {
+            fontSize: '16px',
+            color: "#32325d",
+          }
+        };
+
+        const card = elements.create('card', {style: style});
+
+        card.mount('#card-element');
+
+        card.addEventListener('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+        displayError.textContent = event.error.message;
+        } else {
+        displayError.textContent = '';
+        }
+        });
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          stripe.createToken(card).then(function(result) {
+            if (result.error) {
+              // エラー表示.
+              const errorElement = document.getElementById('card-errors');
+              errorElement.textContent = result.error.message;
+            } else {
+              // トークンをサーバに送信
+              stripeTokenHandler(result.token);
+            }
+          });
+        });
+
+        function stripeTokenHandler(token) {
+          // tokenをフォームへ包含し送信
+          const form = document.getElementById('payment-form');
+          const hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'stripeToken');
+          hiddenInput.setAttribute('value', token.id);
+          form.appendChild(hiddenInput);
+
+          // Submit します
+          form.submit();
+        }
+
+    </script>
+{% endblock %}

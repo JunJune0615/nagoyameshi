@@ -18,7 +18,6 @@ import environ
 from decouple import config
 import dj_database_url
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -178,3 +177,12 @@ LOGIN_REDIRECT_URL = "/account/"
 LOGOUT_REDIRECT_URL = "/account/login/"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# stripe
+STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+STRIPE_PRICE_ID = env('STRIPE_PRICE_ID')
+
+# 画像関連の設定
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media_local'
