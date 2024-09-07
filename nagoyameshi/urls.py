@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('',views.TopView.as_view(), name='top'),
+    path('restaurant/<int:restaurant_id>/',views.RestaurantDetailView.as_view(), name='restaurant_detail'),
     path('account/', include('allauth.urls')), 
     path('profile/',views.ProfileView.as_view(), name='profile'),
     path('profile/change/', views.UserChangeView.as_view(), name='profiel_change'),

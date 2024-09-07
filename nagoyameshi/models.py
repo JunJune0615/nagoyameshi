@@ -10,6 +10,7 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
+
 class MyUserManager(BaseUserManager):
     def create_user(self, username, email, password, **extra_fields):
         if not username:
@@ -37,7 +38,6 @@ class MyUserManager(BaseUserManager):
         user.is_superuser=True
         user.save(using=self._db)
         return user
-
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
