@@ -18,6 +18,24 @@ class TopView(ListView):
     template_name = 'nagoyameshi/top.html'
 
 
+class RestaurantDetailView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_authenticated
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    raise_exception = False
+    login_url = reverse_lazy('top')
+
+    model = Restaurant
+
+    template_name = 'nagoyameshi/restaulant_detail.html'
+    def get(self, request, restaurant_id):
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+        return render(request,"nagoyameshi/restaulant_detail.html",{"restaurant": restaurant})
+    
+
 class ProfileView(UserPassesTestMixin, TemplateView):
     def test_func(self):
         return self.request.user.is_authenticated

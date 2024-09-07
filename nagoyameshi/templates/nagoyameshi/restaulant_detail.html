@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ restaurant.restaurant_name }}{% endblock %}
+{% block content %}
+<h1>"{{ restaurant.restaurant_name }}"</h1>
+<a href="{% url 'profile' %}">プロフィール画面</a>
+<a href="{% url 'account_logout' %}">ログアウト</a>
+<a href="{% url 'top' %}">トップへ戻る</a>
+
+<div>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:200px height:200px;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:200px height:200px;">{% endif %}</div>
+<div>
+    <div>名前：{{ restaurant.restaurant_name }}</div>
+    <div>カテゴリ:{{ restaurant.category }} </div>
+    <div>予算:{{ restaurant.budget }} </div>
+    <div>定休日：{{ restaurant.get_closed_days }}</div>
+    <div>営業時間：{{ restaurant.get_businesshour }}</div>
+    <div>電話番号：{{ restaurant.tel }}</div>
+    <div>郵便番号：{{ restaurant.postal_number }}</div>
+    <div>住所：{{ restaurant.address }}</div>
+</div>
+<div>店舗説明</div>
+<div>{{ restaurant.information }}</div>
+
+{% endblock %}

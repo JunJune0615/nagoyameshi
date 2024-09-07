@@ -10,13 +10,15 @@
             <th>カテゴリ</th>
             <th>店舗名</th>            
             <th>店舗画像</th>
+            <th>詳細URL</th>
         </tr>
     </thead>
     {% for restaurant in object_list %}
     <tr>
         <td>{{ restaurant.category }} </td>
-        <td>{{ restaurant.restaurant_name }}</td>
-        <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:100px height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:100px height:auto;">{% endif %}</td>
+        <td><a href="{% url 'restaurant_detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
+        <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:10px height:10px;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:10px height:10px;">{% endif %}</td>
+        
     </tr>
     {% endfor %}
 </table>
