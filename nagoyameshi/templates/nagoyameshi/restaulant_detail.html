@@ -7,7 +7,7 @@
 <a href="{% url 'account_logout' %}">ログアウト</a>
 <a href="{% url 'top' %}">トップへ戻る</a>
 
-<div>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:200px height:200px;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:200px height:200px;">{% endif %}</div>
+<div>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:200px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:200px height:200px;">{% endif %}</div>
 <div>
     <div>名前：{{ restaurant.restaurant_name }}</div>
     <div>カテゴリ:{{ restaurant.category }} </div>

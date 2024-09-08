@@ -6,7 +6,7 @@ from myproject import settings
 from django.views.generic import TemplateView, View, ListView
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin #ログインしたら見れる
-from .forms import UserChangeForm
+from .forms import UserChangeForm, RestaurantSearchForm
 from django.urls import reverse_lazy
 from .models import CustomUser, Restaurant
 from django.shortcuts import render, redirect
@@ -16,6 +16,29 @@ class TopView(ListView):
     model = Restaurant
     paginate_by = 10
     template_name = 'nagoyameshi/top.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.form = form = RestaurantSearchForm(self.request.GET or None)
+        if form.is_valid():
+            # カテゴリ名で絞り込み
+            category = form.cleaned_data.get('category')
+            if category:
+                queryset = queryset.filter(category=category)
+
+            #　レストラン名で絞り込み
+            restaurant_name = form.cleaned_data.get('restaurant_name')
+            if restaurant_name:
+                queryset = queryset.filter(restaurant_name__icontains=restaurant_name)
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # search formを渡す
+        context['search_form'] = self.form
+
+        return context
 
 
 class RestaurantDetailView(UserPassesTestMixin, View):
