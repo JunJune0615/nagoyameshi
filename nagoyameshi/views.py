@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 import requests
 import stripe
 
@@ -56,24 +57,43 @@ class RestaurantDetailView(UserPassesTestMixin, View):
     template_name = 'nagoyameshi/restaulant_detail.html'
     def get(self, request, restaurant_id):
         restaurant = Restaurant.objects.get(id=restaurant_id)
-        return render(request,"nagoyameshi/restaulant_detail.html",{"restaurant": restaurant})
-
+        favorite = FavoriteRestaurant.objects.filter(restaurant_id=restaurant.id, user_id=request.user.id).first
+        return render(request, "nagoyameshi/restaulant_detail.html", {"restaurant": restaurant, "favorite": favorite})
 
 
 def toggle_favorite(request, restaurant_id):
-    favorite_restaurant = get_object_or_404(FavoriteRestaurant, pk=restaurant_id)
+    restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+    if request.user.vip_member:
+        favorite_restaurant, created = FavoriteRestaurant.objects.get_or_create(user=request.user, restaurant=restaurant)
+        if not created:
+            favorite_restaurant.delete()
+        return redirect('restaurant_detail', restaurant_id=restaurant.id)
+    else:
+        return redirect('credit-register')
+
+
+class FavoriteListView(UserPassesTestMixin, ListView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+
+    raise_exception = False
+    login_url = reverse_lazy('top')
     
+    model = Restaurant
+    
+    paginate_by = 10
 
-# class CreateReview(CreateView):
-#     model = Review
-#     fields = ('review', 'user', 'restaurant')
-#     template_name = 'nagoyameshi/review_form.html'
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['user'] = CustomUser.objects.get(pk=self.kwargs['user_id'])
-#         context['restaurant'] = Restaurant.objects.get(pk=self.kwargs['restaurant_id'])
-#         return context
+    template_name = 'nagoyameshi/favorite_list.html'
 
+    def get_queryset(self):
+        favorites = FavoriteRestaurant.objects.filter(user_id=self.request.user.id)
+        restaurant_ids = [favorite.restaurant_id for favorite in favorites]
+        queryset = super().get_queryset()
+        return queryset.filter(id__in=restaurant_ids)
+    
 
 class ProfileView(UserPassesTestMixin, TemplateView):
     def test_func(self):
@@ -223,5 +243,4 @@ class CreditUpdateView(UserPassesTestMixin, View):
         custom_user.save()
 
         return redirect('top')
-
 

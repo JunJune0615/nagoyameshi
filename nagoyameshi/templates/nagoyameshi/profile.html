@@ -12,7 +12,14 @@
                     <a href="{% url 'profiel_change' %}">ユーザ名変更</a>
                 </div>
                 <a href="{% url 'account_change_password' %}">パスワード変更</a>
-                <a href="{% url 'credit-register' %}">有料会員になる</a>
+                <div>
+                    {% if user.vip_member %}
+                    <a href="{% url 'credit-update' %}">クレジット変更</a>
+                    <a href="{% url 'subscription-cancel' %}">有料会員解除</a>
+                    {% else %}
+                    <a href="{% url 'credit-register' %}">有料会員になる</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

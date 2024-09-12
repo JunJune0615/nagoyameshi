@@ -116,21 +116,15 @@ class Review(models.Model):
     update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.review
     
     class Meta:
         unique_together = ('restaurant', 'user')
 
 
 class FavoriteRestaurant(models.Model):
-    favorite_restaurant = models.BooleanField(verbose_name="お気に入り店舗")
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.favorite_restaurant
     
     class Meta:
         unique_together = ('restaurant', 'user')

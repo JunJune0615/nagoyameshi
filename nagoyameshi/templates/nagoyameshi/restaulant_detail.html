@@ -21,13 +21,16 @@
 <div>店舗説明</div>
 <div>{{ restaurant.information }}</div>
 <div>お気に入り（有料会員のみ）</div>
-<form method="post" action="">
+<form method="post" action="{% url 'toggle_favorite' restaurant.id %}">
     {% csrf_token %}
     {% if user.vip_member %}
-    <button type="submit" name="button">お気に入り追加</button>
+        {% if favorite %}
+            <button type="submit" name="button">お気に入り解除</button>
+        {% else %}
+            <button type="submit" name="button">お気に入り追加</button>
+        {% endif %}
     {% else %}
-    <button type="submit" name="button">お気に入りは有料会員へ</button>
+        <button type="submit" name="button">お気に入りは有料会員へ</button>
     {% endif %}
-    
 </form>
 {% endblock %}
