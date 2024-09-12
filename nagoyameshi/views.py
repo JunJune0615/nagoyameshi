@@ -3,14 +3,14 @@ import stripe
 
 from myproject import settings
 
-from django.views.generic import TemplateView, View, ListView
+from django.views.generic import TemplateView, View, ListView, CreateView
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin #ログインしたら見れる
 from .forms import UserChangeForm, RestaurantSearchForm
 from django.urls import reverse_lazy
-from .models import CustomUser, Restaurant
-from django.shortcuts import render, redirect
-
+from .models import CustomUser, Restaurant, Review, FavoriteRestaurant
+from django.shortcuts import render, redirect, get_object_or_404
+# https://nissin-geppox.hatenablog.com/entry/2022/09/10/221409
 
 class TopView(ListView):
     model = Restaurant
@@ -43,7 +43,7 @@ class TopView(ListView):
 
 class RestaurantDetailView(UserPassesTestMixin, View):
     def test_func(self):
-        return self.request.user.is_authenticated
+        return self.request.user.is_authenticated 
 
     def handle_no_permission(self):
         return redirect('top')
@@ -57,7 +57,23 @@ class RestaurantDetailView(UserPassesTestMixin, View):
     def get(self, request, restaurant_id):
         restaurant = Restaurant.objects.get(id=restaurant_id)
         return render(request,"nagoyameshi/restaulant_detail.html",{"restaurant": restaurant})
+
+
+
+def toggle_favorite(request, restaurant_id):
+    favorite_restaurant = get_object_or_404(FavoriteRestaurant, pk=restaurant_id)
     
+
+# class CreateReview(CreateView):
+#     model = Review
+#     fields = ('review', 'user', 'restaurant')
+#     template_name = 'nagoyameshi/review_form.html'
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['user'] = CustomUser.objects.get(pk=self.kwargs['user_id'])
+#         context['restaurant'] = Restaurant.objects.get(pk=self.kwargs['restaurant_id'])
+#         return context
+
 
 class ProfileView(UserPassesTestMixin, TemplateView):
     def test_func(self):
@@ -207,3 +223,5 @@ class CreditUpdateView(UserPassesTestMixin, View):
         custom_user.save()
 
         return redirect('top')
+
+

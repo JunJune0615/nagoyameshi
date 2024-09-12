@@ -12,6 +12,7 @@ urlpatterns = [
     path('credit/register/', views.CreditRegisterView.as_view(), name='credit-register'),
     path('credit/update/', views.CreditUpdateView.as_view(), name='credit-update'),
     path('subscription/cancel/', views.SubscriptionCancelView.as_view(), name='subscription-cancel'),
+    path('restaurant/favorite/<int:restaurant_id>>/<int:user_id>', views.toggle_favorite, name='toggle_favorite'),
 ]
 
 if settings.DEBUG:

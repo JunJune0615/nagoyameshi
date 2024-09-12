@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import CustomUser, Category
+from .models import CustomUser, Category, Review
 from django import forms
 
 class UserChangeForm(ModelForm):
@@ -29,3 +29,8 @@ class RestaurantSearchForm(forms.Form):
                                       })
     )
 
+
+class ReviewForm(forms.ModelForm):   
+    class Meta:
+        model = Review
+        fields = ['review', 'user', 'restaurant']

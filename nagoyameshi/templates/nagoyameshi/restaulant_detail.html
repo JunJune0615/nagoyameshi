@@ -20,5 +20,14 @@
 </div>
 <div>店舗説明</div>
 <div>{{ restaurant.information }}</div>
-
+<div>お気に入り（有料会員のみ）</div>
+<form method="post" action="">
+    {% csrf_token %}
+    {% if user.vip_member %}
+    <button type="submit" name="button">お気に入り追加</button>
+    {% else %}
+    <button type="submit" name="button">お気に入りは有料会員へ</button>
+    {% endif %}
+    
+</form>
 {% endblock %}

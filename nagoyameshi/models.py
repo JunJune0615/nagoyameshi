@@ -39,31 +39,6 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
-class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(verbose_name='名前', max_length=100)
-    email = models.CharField(verbose_name='メールアドレス', unique=True, max_length=100)
-    password = models.CharField(verbose_name='パスワード', max_length=100)
-    vip_member = models.BooleanField("有料会員ステータス", default=False)
-    create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
-
-    is_staff = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
-
-    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
-    stripe_card_id = models.CharField(max_length=255, blank=True, null=True)
-    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
-
-    #AbstractBaseUserにはMyUserManagerが必要
-    objects = MyUserManager()
-
-    #一意の識別子として使用されます
-    USERNAME_FIELD = 'email'
-    #ユーザーを作成するときにプロンプ​​トに表示されるフィールド名のリストです。
-    REQUIRED_FIELDS = ['username']
-
-    
 class Restaurant(models.Model):
     restaurant_name = models.CharField(verbose_name="店舗名", max_length=200)
     budget = models.PositiveIntegerField(verbose_name="予算")
@@ -109,4 +84,54 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.restaurant_name
+
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(verbose_name='名前', max_length=100)
+    email = models.CharField(verbose_name='メールアドレス', unique=True, max_length=100)
+    password = models.CharField(verbose_name='パスワード', max_length=100)
+    vip_member = models.BooleanField("有料会員ステータス", default=False)
+    create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
+    update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
+    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_card_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
+
+    #AbstractBaseUserにはMyUserManagerが必要
+    objects = MyUserManager()
+
+    #一意の識別子として使用されます
+    USERNAME_FIELD = 'email'
+    #ユーザーを作成するときにプロンプ​​トに表示されるフィールド名のリストです。
+    REQUIRED_FIELDS = ['username']
+
+    
+class Review(models.Model):
+    review = models.TextField(verbose_name="店舗レビュー")
+    create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
+    update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.review
+    
+    class Meta:
+        unique_together = ('restaurant', 'user')
+
+
+class FavoriteRestaurant(models.Model):
+    favorite_restaurant = models.BooleanField(verbose_name="お気に入り店舗")
+    create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
+    update_date = models.DateTimeField(verbose_name="更新日時", auto_now=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.favorite_restaurant
+    
+    class Meta:
+        unique_together = ('restaurant', 'user')
 
