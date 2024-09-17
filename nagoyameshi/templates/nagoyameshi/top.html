@@ -28,7 +28,7 @@
     <br>
     {% for restaurant in object_list %}
     <tr>
-        <td><a href="{% url 'restaurant_detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
+        <td><a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
         <td>{{ restaurant.category }} </td>
         <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</td>
     </tr>

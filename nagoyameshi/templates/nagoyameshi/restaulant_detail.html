@@ -21,7 +21,7 @@
 <div>店舗説明</div>
 <div>{{ restaurant.information }}</div>
 <div>お気に入り（有料会員のみ）</div>
-<form method="post" action="{% url 'toggle_favorite' restaurant.id %}">
+<form method="post" action="{% url 'toggle-favorite' restaurant.id %}">
     {% csrf_token %}
     {% if user.vip_member %}
         {% if favorite %}
@@ -33,4 +33,19 @@
         <button type="submit" name="button">お気に入りは有料会員へ</button>
     {% endif %}
 </form>
+<div>レビュー投稿（有料会員のみ）</div>
+{% if user.vip_member %}
+    {% if review %}
+        <div>{{ user.username }}のレビュー</div>
+        <div>{{ review.review }}</div>
+        <a href="{% url 'review-update' review.pk %}">{{ restaurant.restaurant_name }}のレビューを編集する</a>
+        <a href="{% url 'review-delete' restaurant.id %}">{{ restaurant.restaurant_name }}のレビューを削除する</a>
+    {% else %}
+        <a href="{% url 'review-create' restaurant.id %}">{{ restaurant.restaurant_name }}をレビューしませんか？</a>
+    {% endif %}
+{% else %}
+    <a href="{% url 'credit-register' %}">レビュー機能は有料会員へ</a>  
+{% endif %}
+</form>
+
 {% endblock %}

@@ -119,7 +119,7 @@ class Review(models.Model):
     
     class Meta:
         unique_together = ('restaurant', 'user')
-
+    
 
 class FavoriteRestaurant(models.Model):
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
@@ -128,4 +128,3 @@ class FavoriteRestaurant(models.Model):
     
     class Meta:
         unique_together = ('restaurant', 'user')
-

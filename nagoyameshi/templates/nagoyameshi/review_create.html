@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+ 
+{% block title %}レビュー作成{% endblock %}
+{% block content %}
+<h1>レビュー作成</h1>
+ 
+<div>
+    <div>ユーザ名：{{ user.username }}</div>
+    <div>レビュー先：{{ restaurant.restaurant_name }}</div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <label>レビュー</label>
+    <textarea class="form-control" name="review" rows="3"></textarea>
+    <label>
+    <br>
+    <input type="hidden" name='restaurant' value="{{ restaurant.id }}">
+    <input type="submit" value="レビューを登録">
+</form>
+<div>
+    <a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}の詳細へ</a>
+</div>
+{% endblock %}
