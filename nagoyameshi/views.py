@@ -1,16 +1,19 @@
+from django.db.models.query import QuerySet
+from django.forms import BaseModelForm
+from django.http import HttpResponse
 import requests
 import stripe
 
 from myproject import settings
 
-from django.views.generic import TemplateView, View, ListView
-from django.views.generic.edit import UpdateView
+from django.views.generic import TemplateView, View, ListView, CreateView
+from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.auth.mixins import UserPassesTestMixin #ログインしたら見れる
-from .forms import UserChangeForm, RestaurantSearchForm
-from django.urls import reverse_lazy
-from .models import CustomUser, Restaurant
-from django.shortcuts import render, redirect
-
+from .forms import UserChangeForm, RestaurantSearchForm, ReviewForm, ReviewCreateForm
+from django.urls import reverse_lazy, reverse
+from .models import CustomUser, Restaurant, Review, FavoriteRestaurant
+from django.shortcuts import render, redirect, get_object_or_404
+# https://nissin-geppox.hatenablog.com/entry/2022/09/10/221409
 
 class TopView(ListView):
     model = Restaurant
@@ -43,7 +46,7 @@ class TopView(ListView):
 
 class RestaurantDetailView(UserPassesTestMixin, View):
     def test_func(self):
-        return self.request.user.is_authenticated
+        return self.request.user.is_authenticated 
 
     def handle_no_permission(self):
         return redirect('top')
@@ -54,9 +57,110 @@ class RestaurantDetailView(UserPassesTestMixin, View):
     model = Restaurant
 
     template_name = 'nagoyameshi/restaulant_detail.html'
+
     def get(self, request, restaurant_id):
         restaurant = Restaurant.objects.get(id=restaurant_id)
-        return render(request,"nagoyameshi/restaulant_detail.html",{"restaurant": restaurant})
+        favorite = FavoriteRestaurant.objects.filter(restaurant_id=restaurant.id, user_id=request.user.id).first
+        review = Review.objects.filter(restaurant_id=restaurant.id, user_id=request.user.id).first
+        return render(request, "nagoyameshi/restaulant_detail.html", {"restaurant": restaurant, "favorite": favorite, "review":review})
+
+
+def toggle_favorite(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+    if request.user.vip_member:
+        favorite_restaurant, created = FavoriteRestaurant.objects.get_or_create(user=request.user, restaurant=restaurant)
+        if not created:
+            favorite_restaurant.delete()
+        return redirect('restaurant-detail', restaurant_id=restaurant.id)
+    else:
+        return redirect('credit-register')
+
+
+class ReviewCreateView(UserPassesTestMixin, CreateView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    raise_exception = False
+    login_url = reverse_lazy('top')
+    
+    model = Review
+
+    form_class = ReviewForm
+
+    template_name = 'nagoyameshi/review_create.html'
+
+    def get(self, request, restaurant_id):
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+        return render(request, "nagoyameshi/review_create.html", {"restaurant": restaurant})
+
+    success_url = reverse_lazy('top')
+    
+    def form_valid(self, form):
+        review = form.save(commit=False)
+        review.user = self.request.user
+        return super().form_valid(form)
+
+
+class ReviewUpdateView(UserPassesTestMixin, UpdateView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    template_name = 'nagoyameshi/review_update.html'
+
+    form_class = ReviewCreateForm
+
+    model = Review
+
+    success_url = reverse_lazy('top')
+
+    def get(self, request, pk):
+        review = get_object_or_404(Review, pk=pk)
+        return render(request, "nagoyameshi/review_update.html", {"review": review})
+
+
+    def form_valid(self, form):
+        review = form.save(commit=False)
+        review.user = self.request.user
+        return super().form_valid(form)
+
+
+class ReviewDeleteView(UserPassesTestMixin, DeleteView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    success_url = reverse_lazy('top')
+
+
+class FavoriteListView(UserPassesTestMixin, ListView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+
+    raise_exception = False
+    login_url = reverse_lazy('top')
+    
+    model = Restaurant
+    
+    paginate_by = 10
+
+    template_name = 'nagoyameshi/favorite_list.html'
+
+    def get_queryset(self):
+        favorites = FavoriteRestaurant.objects.filter(user_id=self.request.user.id)
+        restaurant_ids = [favorite.restaurant_id for favorite in favorites]
+        queryset = super().get_queryset()
+        return queryset.filter(id__in=restaurant_ids)
     
 
 class ProfileView(UserPassesTestMixin, TemplateView):
@@ -207,3 +311,4 @@ class CreditUpdateView(UserPassesTestMixin, View):
         custom_user.save()
 
         return redirect('top')
+

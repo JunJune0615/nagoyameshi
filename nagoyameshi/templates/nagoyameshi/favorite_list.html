@@ -4,19 +4,7 @@
 {% block content %}
 
 <a href="{% url 'account_login' %}">ログインする</a>
-<h1>名古屋の店舗一覧</h1>
-<form class="mt-2" id="search-form" action="" method="GET">
-    <div>
-        店舗名
-      {{ search_form.restaurant_name }}
-      <button type="submit">検索</button>
-    </div>
-    <div>
-        カテゴリ
-      {{ search_form.category }}
-    </div>
-</form>
-
+<h1>お気に入り店舗一覧</h1>
 <table border="3">
     <thead>
         <tr>
