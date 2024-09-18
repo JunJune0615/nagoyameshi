@@ -76,6 +76,29 @@ def toggle_favorite(request, restaurant_id):
         return redirect('credit-register')
 
 
+class FavoriteListView(UserPassesTestMixin, ListView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+
+    raise_exception = False
+    login_url = reverse_lazy('top')
+    
+    model = Restaurant
+    
+    paginate_by = 10
+
+    template_name = 'nagoyameshi/favorite_list.html'
+
+    def get_queryset(self):
+        favorites = FavoriteRestaurant.objects.filter(user_id=self.request.user.id)
+        restaurant_ids = [favorite.restaurant_id for favorite in favorites]
+        queryset = super().get_queryset()
+        return queryset.filter(id__in=restaurant_ids)
+
+
 class ReviewCreateView(UserPassesTestMixin, CreateView):
     def test_func(self):
         return self.request.user.is_authenticated and self.request.user.vip_member
@@ -121,7 +144,8 @@ class ReviewUpdateView(UserPassesTestMixin, UpdateView):
 
     def get(self, request, pk):
         review = get_object_or_404(Review, pk=pk)
-        return render(request, "nagoyameshi/review_update.html", {"review": review})
+        restaurant = get_object_or_404(Restaurant, restaurant_name=review.restaurant)
+        return render(request, "nagoyameshi/review_update.html", {"review": review, "restaurant": restaurant})
 
 
     def form_valid(self, form):
@@ -137,31 +161,21 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
     def handle_no_permission(self):
         return redirect('top')
     
+    model = Review
+
     success_url = reverse_lazy('top')
 
+    template_name = 'nagoyameshi/review_delete.html'
 
-class FavoriteListView(UserPassesTestMixin, ListView):
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.vip_member
+    def get(self, request, pk):
+        review = get_object_or_404(Review, pk=pk)
+        restaurant = get_object_or_404(Restaurant, restaurant_name=review.restaurant)
+        return render(request, "nagoyameshi/review_delete.html", {"review": review, "restaurant": restaurant})
 
-    def handle_no_permission(self):
-        return redirect('top')
 
-    raise_exception = False
-    login_url = reverse_lazy('top')
-    
-    model = Restaurant
-    
-    paginate_by = 10
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
 
-    template_name = 'nagoyameshi/favorite_list.html'
-
-    def get_queryset(self):
-        favorites = FavoriteRestaurant.objects.filter(user_id=self.request.user.id)
-        restaurant_ids = [favorite.restaurant_id for favorite in favorites]
-        queryset = super().get_queryset()
-        return queryset.filter(id__in=restaurant_ids)
-    
 
 class ProfileView(UserPassesTestMixin, TemplateView):
     def test_func(self):
