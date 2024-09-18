@@ -16,7 +16,7 @@ urlpatterns = [
     path('restaurant/favorite/list/', views.FavoriteListView.as_view(), name='favorite-list'),
     path('restaurant/review_create/<int:restaurant_id>/', views.ReviewCreateView.as_view(), name='review-create'),
     path('restaurant/review_update/<int:pk>/', views.ReviewUpdateView.as_view(), name='review-update'),
-    path('restaurant/review_delete/<int:restaurant_id>/', views.ReviewDeleteView.as_view(), name='review-delete'),
+    path('restaurant/review_delete/<int:pk>/', views.ReviewDeleteView.as_view(), name='review-delete'),
 ]
 
 if settings.DEBUG:
