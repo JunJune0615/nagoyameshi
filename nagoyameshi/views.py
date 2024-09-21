@@ -3,6 +3,7 @@ from django.forms import BaseModelForm
 from django.http import HttpResponse
 import requests
 import stripe
+import datetime
 
 from myproject import settings
 
@@ -13,6 +14,8 @@ from .forms import UserChangeForm, RestaurantSearchForm, ReviewForm, ReviewCreat
 from django.urls import reverse_lazy, reverse
 from .models import CustomUser, Restaurant, Review, FavoriteRestaurant
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.db.models import Q
 # https://nissin-geppox.hatenablog.com/entry/2022/09/10/221409
 
 class TopView(ListView):
@@ -61,8 +64,9 @@ class RestaurantDetailView(UserPassesTestMixin, View):
     def get(self, request, restaurant_id):
         restaurant = Restaurant.objects.get(id=restaurant_id)
         favorite = FavoriteRestaurant.objects.filter(restaurant_id=restaurant.id, user_id=request.user.id).first
-        review = Review.objects.filter(restaurant_id=restaurant.id, user_id=request.user.id).first
-        return render(request, "nagoyameshi/restaulant_detail.html", {"restaurant": restaurant, "favorite": favorite, "review":review})
+        reviews = Review.objects.filter(restaurant_id=restaurant.id)
+        is_review = reviews.filter(user_id=request.user.id).exists
+        return render(request, "nagoyameshi/restaulant_detail.html", {"restaurant": restaurant, "favorite": favorite, "reviews": reviews, "is_review": is_review})
 
 
 def toggle_favorite(request, restaurant_id):
@@ -119,7 +123,8 @@ class ReviewCreateView(UserPassesTestMixin, CreateView):
         restaurant = Restaurant.objects.get(id=restaurant_id)
         return render(request, "nagoyameshi/review_create.html", {"restaurant": restaurant})
 
-    success_url = reverse_lazy('top')
+    def get_success_url(self):
+        return reverse('restaurant-detail', kwargs={'restaurant_id': int(self.kwargs['restaurant_id'])})
     
     def form_valid(self, form):
         review = form.save(commit=False)
@@ -140,10 +145,11 @@ class ReviewUpdateView(UserPassesTestMixin, UpdateView):
 
     model = Review
 
-    success_url = reverse_lazy('top')
-
+    def get_success_url(self):
+        return reverse('restaurant-detail', kwargs={'restaurant_id': int(self.object.restaurant.pk)})
+    
     def get(self, request, pk):
-        review = get_object_or_404(Review, pk=pk)
+        review = get_object_or_404(Review, pk=pk, user_id=self.request.user.id)
         restaurant = get_object_or_404(Restaurant, restaurant_name=review.restaurant)
         return render(request, "nagoyameshi/review_update.html", {"review": review, "restaurant": restaurant})
 
@@ -163,7 +169,8 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
     
     model = Review
 
-    success_url = reverse_lazy('top')
+    def get_success_url(self):
+        return reverse('restaurant-detail', kwargs={'restaurant_id': int(self.object.restaurant.pk)})
 
     template_name = 'nagoyameshi/review_delete.html'
 
@@ -325,4 +332,70 @@ class CreditUpdateView(UserPassesTestMixin, View):
         custom_user.save()
 
         return redirect('top')
+
+
+class BookingCalender(UserPassesTestMixin, TemplateView):
+    template_name = 'nagoyameshi/booking_calendar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        restaurant = get_object_or_404(Restaurant, id=self.kwargs['restaurant_id'])
+        today = datetime.date.today()
+
+        # どの日を基準にカレンダーを表示するかの処理。
+        # 年月日の指定があればそれを、なければ今日からの表示。
+        year = self.kwargs.get('year')
+        month = self.kwargs.get('month')
+        day = self.kwargs.get('day')
+        if year and month and day:
+            base_date = datetime.date(year=year, month=month, day=day)
+        else:
+            base_date = today
+
+         # カレンダーは1週間分表示するので、基準日から1週間の日付を作成しておく
+        days = [base_date + datetime.timedelta(days=day) for day in range(7)]
+        start_day = days[0]
+        end_day = days[-1]
+        
+        # 9時から17時まで1時間刻み、1週間分の、値がTrueなカレンダーを作る
+        calendar = {}
+        for hour in range(0, 24):
+            row = {}
+            for day in days:
+                row[day] = True
+            calendar[hour] = row
+        
+        open_time = restaurant.open_time
+        close_time = restaurant.close_time
+        if open_time >= close_time:
+            start_time = datetime.datetime.combine(end_day, datetime.time(hour=0, minute=0, second=0))
+            end_time = datetime.datetime.combine(end_day, datetime.time(hour=24, minute=0, second=0))
+        else:
+            start_time = open_time
+            end_time = close_time
+
+        for schedule in Restaurant.objects.filter(restaurant=restaurant).exclude(Q(start__gt=start_time) | Q(end__lt=close_time)):
+            local_dt = timezone.localtime(schedule.start)
+            booking_date = local_dt.date()
+            booking_hour = local_dt.hour
+            if booking_hour in calendar and booking_date in calendar[booking_hour]:
+                calendar[booking_hour][booking_date] = False
+
+        for schedule in Restaurant.objects.filter(restaurant=restaurant).exclude(Q(start__gt=open_time) | Q(end__lt=end_time)):
+            local_dt = timezone.localtime(schedule.start)
+            booking_date = local_dt.date()
+            booking_hour = local_dt.hour
+            if booking_hour in calendar and booking_date in calendar[booking_hour]:
+                calendar[booking_hour][booking_date] = False
+
+        context['restaurant'] = restaurant
+        context['calendar'] = calendar
+        context['days'] = days
+        context['start_day'] = start_day
+        context['end_day'] = end_day
+        context['before'] = days[0] - datetime.timedelta(days=7)
+        context['next'] = days[-1] + datetime.timedelta(days=1)
+        context['today'] = today
+        context['public_holidays'] = settings.PUBLIC_HOLIDAYS
+        return context
 

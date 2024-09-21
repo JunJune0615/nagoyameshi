@@ -128,3 +128,11 @@ class FavoriteRestaurant(models.Model):
     
     class Meta:
         unique_together = ('restaurant', 'user')
+
+class RestaurantBooking(models.Model):
+    create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(verbose_name='開始時間')
+    people_number = models.IntegerField(verbose_name='予約人数')
+

@@ -34,20 +34,23 @@
     {% endif %}
 </form>
 <div>レビュー投稿（有料会員限定）</div>
+
+{% for review in reviews %}
+    <div>{{ review.user.username }}のレビュー</div>
+    <div>{{ review.review }}</div>
+    {% if review.user.id == request.user.id %}
+        <button onclick="location.href='{% url 'review-update' review.pk %}'">{{ review.restaurant.restaurant_name }}のレビューを編集する</button>
+        <br>
+        <br>
+        <button onclick="location.href='{% url 'review-delete' review.pk %}'">{{ review.restaurant.restaurant_name }}のレビューを削除する</button>
+    {% endif %}
+{% endfor %}
 {% if user.vip_member %}
-    {% if review %}
-        <div>{{ user.username }}のレビュー</div>
-        <div>{{ review.review }}</div>
-        <button onclick="location.href='{% url 'review-update' review.pk %}'">{{ restaurant.restaurant_name }}のレビューを編集する</button>
-        <br>
-        <br>
-        <button onclick="location.href='{% url 'review-delete' review.pk %}'">{{ restaurant.restaurant_name }}のレビューを削除する</button>
-    {% else %}
+    {% if not is_review %}
         <button onclick="location.href='{% url 'review-create' restaurant.id %}'">{{ restaurant.restaurant_name }}をレビューしませんか？</button>
     {% endif %}
 {% else %}
-    <a href="{% url 'credit-register' %}">レビュー機能は有料会員へ</a>  
+<button onclick="location.href='{% url 'credit-register' %}'">レビューは有料会員へ</button>
 {% endif %}
-</form>
 
 {% endblock %}
