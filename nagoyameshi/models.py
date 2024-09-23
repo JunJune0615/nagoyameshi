@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.utils import timezone
 
 class Category(models.Model):
     category_name = models.CharField(verbose_name="カテゴリ名",max_length=200)
@@ -133,6 +133,12 @@ class RestaurantBooking(models.Model):
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    start_time = models.DateTimeField(verbose_name='開始時間')
+    start = models.DateTimeField(verbose_name='開始時間')
+    end = models.DateTimeField('終了時間')
     people_number = models.IntegerField(verbose_name='予約人数')
+
+    def __str__(self):
+        start = timezone.localtime(self.start).strftime('%Y/%m/%d %H:%M:%S')
+        end = timezone.localtime(self.end).strftime('%Y/%m/%d %H:%M:%S')
+        return f'{self.restaurant} {start} ~ {end}'
 

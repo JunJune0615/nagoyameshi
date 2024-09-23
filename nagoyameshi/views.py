@@ -12,7 +12,7 @@ from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.auth.mixins import UserPassesTestMixin #ログインしたら見れる
 from .forms import UserChangeForm, RestaurantSearchForm, ReviewForm, ReviewCreateForm
 from django.urls import reverse_lazy, reverse
-from .models import CustomUser, Restaurant, Review, FavoriteRestaurant
+from .models import CustomUser, Restaurant, Review, FavoriteRestaurant, RestaurantBooking
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
@@ -334,7 +334,15 @@ class CreditUpdateView(UserPassesTestMixin, View):
         return redirect('top')
 
 
-class BookingCalender(UserPassesTestMixin, TemplateView):
+class BookingCalendar(UserPassesTestMixin, TemplateView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    raise_exception = False
+    login_url = reverse_lazy('top')
     template_name = 'nagoyameshi/booking_calendar.html'
 
     def get_context_data(self, **kwargs):
@@ -357,34 +365,34 @@ class BookingCalender(UserPassesTestMixin, TemplateView):
         start_day = days[0]
         end_day = days[-1]
         
-        # 9時から17時まで1時間刻み、1週間分の、値がTrueなカレンダーを作る
-        calendar = {}
-        for hour in range(0, 24):
-            row = {}
-            for day in days:
-                row[day] = True
-            calendar[hour] = row
-        
         open_time = restaurant.open_time
         close_time = restaurant.close_time
-        if open_time >= close_time:
-            start_time = datetime.datetime.combine(end_day, datetime.time(hour=0, minute=0, second=0))
-            end_time = datetime.datetime.combine(end_day, datetime.time(hour=24, minute=0, second=0))
+
+        open_hour = int(open_time.hour)
+        end_hour = int(close_time.hour)
+
+        if open_hour >= end_hour:
+            start_hour_false = end_hour
+            finish_hour_false = open_hour
         else:
-            start_time = open_time
-            end_time = close_time
+            start_hour_false = 0
+            finish_hour_false = 24
 
-        for schedule in Restaurant.objects.filter(restaurant=restaurant).exclude(Q(start__gt=start_time) | Q(end__lt=close_time)):
+        # 0時から24時まで1時間刻み、1週間分の、値がTrueなカレンダーを作る
+        calendar = {}
+        for hour in range(0, 24):
+            calendar[hour] = {}
+            for day in days:
+                if (open_hour > hour and hour >= start_hour_false) or (end_hour <= hour and hour < finish_hour_false):
+                    calendar[hour][day] = False
+                else:
+                    calendar[hour][day] = True
+
+        #予約しているものをFalseとする
+        for schedule in RestaurantBooking.objects.filter(restaurant=restaurant):
             local_dt = timezone.localtime(schedule.start)
             booking_date = local_dt.date()
-            booking_hour = local_dt.hour
-            if booking_hour in calendar and booking_date in calendar[booking_hour]:
-                calendar[booking_hour][booking_date] = False
-
-        for schedule in Restaurant.objects.filter(restaurant=restaurant).exclude(Q(start__gt=open_time) | Q(end__lt=end_time)):
-            local_dt = timezone.localtime(schedule.start)
-            booking_date = local_dt.date()
-            booking_hour = local_dt.hour
+            booking_hour = int(local_dt.hour)
             if booking_hour in calendar and booking_date in calendar[booking_hour]:
                 calendar[booking_hour][booking_date] = False
 
@@ -396,6 +404,5 @@ class BookingCalender(UserPassesTestMixin, TemplateView):
         context['before'] = days[0] - datetime.timedelta(days=7)
         context['next'] = days[-1] + datetime.timedelta(days=1)
         context['today'] = today
-        context['public_holidays'] = settings.PUBLIC_HOLIDAYS
         return context
 

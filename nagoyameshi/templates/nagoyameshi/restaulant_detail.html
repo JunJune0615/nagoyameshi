@@ -20,6 +20,11 @@
 </div>
 <div>店舗説明</div>
 <div>{{ restaurant.information }}</div>
+{% if user.vip_member %}
+    <button onclick="location.href='{% url 'calendar' restaurant.id %}'">{{ restaurant.restaurant_name }}の予約する</button>
+{% else %}
+    <button onclick="location.href='{% url 'credit-register' %}'">店舗予約は有料会員へ</button>
+{% endif %}
 <div>お気に入り（有料会員限定）</div>
 <form method="post" action="{% url 'toggle-favorite' restaurant.id %}">
     {% csrf_token %}
@@ -52,5 +57,4 @@
 {% else %}
 <button onclick="location.href='{% url 'credit-register' %}'">レビューは有料会員へ</button>
 {% endif %}
-
 {% endblock %}

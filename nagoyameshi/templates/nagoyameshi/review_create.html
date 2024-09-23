@@ -19,6 +19,6 @@
     <input type="submit" value="レビューを登録">
 </form>
 <div>
-    <a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}の詳細へ</a>
+    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ review.restaurant }}の詳細に戻る</button>
 </div>
 {% endblock %}

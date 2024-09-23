@@ -17,7 +17,8 @@ urlpatterns = [
     path('restaurant/review_create/<int:restaurant_id>/', views.ReviewCreateView.as_view(), name='review-create'),
     path('restaurant/review_update/<int:pk>/', views.ReviewUpdateView.as_view(), name='review-update'),
     path('restaurant/review_delete/<int:pk>/', views.ReviewDeleteView.as_view(), name='review-delete'),
-    path('restaurant/calendar/<int:pk>/', views.BookingCalender.as_view(), name='calender'),
+    path('restaurant/calendar/<int:restaurant_id>/', views.BookingCalendar.as_view(), name='calendar'),
+    path('staff/calendar/<int:restaurant_id>/<int:year>/<int:month>/<int:day>/', views.BookingCalendar.as_view(), name='calendar'),
 ]
 
 if settings.DEBUG:
