@@ -10,11 +10,12 @@ from myproject import settings
 from django.views.generic import TemplateView, View, ListView, CreateView
 from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.auth.mixins import UserPassesTestMixin #ログインしたら見れる
-from .forms import UserChangeForm, RestaurantSearchForm, ReviewForm, ReviewCreateForm
+from .forms import UserChangeForm, RestaurantSearchForm, ReviewForm, ReviewCreateForm, BookingForm
 from django.urls import reverse_lazy, reverse
 from .models import CustomUser, Restaurant, Review, FavoriteRestaurant, RestaurantBooking
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.contrib import messages
 from django.db.models import Q
 # https://nissin-geppox.hatenablog.com/entry/2022/09/10/221409
 
@@ -175,10 +176,9 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
     template_name = 'nagoyameshi/review_delete.html'
 
     def get(self, request, pk):
-        review = get_object_or_404(Review, pk=pk)
+        review = get_object_or_404(Review, pk=pk, user_id=self.request.user.id)
         restaurant = get_object_or_404(Restaurant, restaurant_name=review.restaurant)
         return render(request, "nagoyameshi/review_delete.html", {"review": review, "restaurant": restaurant})
-
 
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
@@ -406,3 +406,137 @@ class BookingCalendar(UserPassesTestMixin, TemplateView):
         context['today'] = today
         return context
 
+
+class Booking(UserPassesTestMixin, CreateView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    raise_exception = False
+    login_url = reverse_lazy('top')
+    template_name = 'nagoyameshi/booking.html'
+    model = RestaurantBooking
+
+    form_class = BookingForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['restaurant'] = get_object_or_404(Restaurant, id=self.kwargs['restaurant_id'])
+        return context
+
+    def form_valid(self, form):
+        restaurant =  get_object_or_404(Restaurant, id=self.kwargs['restaurant_id'])
+        year = self.kwargs.get('year')
+        month = self.kwargs.get('month')
+        day = self.kwargs.get('day')
+        hour = self.kwargs.get('hour')
+        start = datetime.datetime(year=year, month=month, day=day, hour=hour)
+        end = datetime.datetime(year=year, month=month, day=day, hour=hour + 1)
+        
+        open_time = restaurant.open_time
+        close_time = restaurant.close_time
+
+        open_hour = int(open_time.hour)
+        end_hour = int(close_time.hour)
+
+        if open_hour >= end_hour:
+            start_hour_false = end_hour
+            finish_hour_false = open_hour
+        else:
+            start_hour_false = 0
+            finish_hour_false = 24
+        
+        if RestaurantBooking.objects.filter(restaurant=restaurant, start=start).exists():
+            messages.error(self.request, '入れ違いで予約がありました。お手数をおかけしますが別の日時を選択してください。')
+        elif (open_hour > hour and hour >= start_hour_false) or (end_hour <= hour and hour < finish_hour_false):
+            messages.error(self.request, '不正の時間帯です。')
+        else:
+            booking = form.save(commit=False)
+            booking.user = self.request.user
+            booking.restaurant = restaurant
+            booking.start = start
+            booking.end = end
+            booking.save()
+        return redirect('booking-list')
+
+
+class BookingListView(UserPassesTestMixin, ListView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+
+    raise_exception = False
+    login_url = reverse_lazy('top')
+    
+    model = Restaurant
+
+    paginate_by = 10
+
+    template_name = 'nagoyameshi/booking_list.html'
+
+    def get_queryset(self):
+        queryset = RestaurantBooking.objects.filter(user_id=self.request.user.id).order_by('start')
+        return queryset
+
+
+class BookingUpdateView(UserPassesTestMixin, UpdateView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    template_name = 'nagoyameshi/booking_update.html'
+
+    form_class = BookingForm
+
+    model = RestaurantBooking
+
+    success_url = reverse_lazy('booking-list')
+
+    def get(self, request, pk):
+        booking = get_object_or_404(RestaurantBooking, pk=pk, user_id=self.request.user.id)
+        today = datetime.date.today()
+        form = BookingForm()
+        if today >= booking.start.date():
+            messages.error(self.request, '当日より以前のものは人数変更できません。お店へ連絡してください')
+            return redirect('booking-list')
+        return render(request, "nagoyameshi/booking_update.html", {"booking": booking, 'form': form})
+
+    def form_valid(self, form):
+        booking = form.save(commit=False)
+        booking.user = self.request.user
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "予約人数は10人までです")
+        return redirect('booking-list')
+
+
+class BookingDeleteView(UserPassesTestMixin, DeleteView):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.vip_member
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    model = RestaurantBooking
+
+    template_name = 'nagoyameshi/booking_delete.html'
+
+    success_url = reverse_lazy('booking-list')
+
+    def get(self, request, pk):
+        booking = get_object_or_404(RestaurantBooking, pk=pk, user_id=self.request.user.id)
+        today = datetime.date.today()
+        if today >= booking.start.date():
+            messages.error(self.request, '当日より以前のものはキャンセルできません。お店へ連絡してください')
+            return redirect('booking-list')
+        return render(request, "nagoyameshi/booking_delete.html", {"booking": booking})
+
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)

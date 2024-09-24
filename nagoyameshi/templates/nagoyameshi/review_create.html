@@ -18,7 +18,5 @@
     <input type="hidden" name='restaurant' value="{{ restaurant.id }}">
     <input type="submit" value="レビューを登録">
 </form>
-<div>
-    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ review.restaurant }}の詳細に戻る</button>
-</div>
+<a href="{% url 'restaurant-detail' restaurant.id %}">店舗の詳細に戻る</a>
 {% endblock %}

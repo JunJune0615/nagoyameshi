@@ -2,7 +2,6 @@
 
 {% block content %}
     <h1>{{ restaurant.restaurant_name }}</h1>
-    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ restaurant.restaurant_name }}の詳細に戻る</button>
     <p>{{ start_day }} - {{ end_day }}</p>
     <table class="table table-bordered text-center" style="table-layout: fixed;width: 100%" border="1">
         <tr>
@@ -29,7 +28,7 @@
                         {% if dt <= today %}
                             -
                         {% elif book %}
-                            <a href="">○</a>
+                            <a href="{% url 'booking' restaurant.id dt.year dt.month dt.day hour %}">○</a>
                         {% else %}
                             ×
                         {% endif %}
@@ -40,6 +39,6 @@
                 </td>
             </tr>
         {% endfor %}
-
     </table>
+    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ restaurant.restaurant_name }}の詳細に戻る</button>
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+ 
+{% block title %}レビュー削除{% endblock %}
+{% block content %}
+<h1>レビュー削除</h1>
+
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>{{ booking.restaurant }}：{{ booking.start }}からの予約をキャンセルしますか？</p>
+    <button type="submit">キャンセル</button>
+</form>
+<br>
+<br>
+<button onclick="location.href='{% url 'booking-list' %}'">予約一覧に戻る</button>
+{% endblock %}

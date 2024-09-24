@@ -2,8 +2,6 @@
 {% load static %}
 {% block title %}店舗一覧{% endblock %}
 {% block content %}
-
-<a href="{% url 'account_login' %}">ログインする</a>
 <h1>名古屋の店舗一覧</h1>
 <form class="mt-2" id="search-form" action="" method="GET">
     <div>
@@ -17,24 +15,25 @@
     </div>
 </form>
 
-<table border="3">
-    <thead>
+<div class="col-10 mx-auto">
+    <table border="3" class="table">
+        <thead>
+            <tr>
+                <th>店舗名</th>
+                <th>カテゴリ</th>
+                <th>店舗画像</th>
+            </tr>
+        </thead>
+        <br>
+        {% for restaurant in object_list %}
         <tr>
-            <th>店舗名</th>
-            <th>カテゴリ</th>
-            <th>店舗画像</th>
+            <td><a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
+            <td>{{ restaurant.category }} </td>
+            <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</td>
         </tr>
-    </thead>
-    <br>
-    {% for restaurant in object_list %}
-    <tr>
-        <td><a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
-        <td>{{ restaurant.category }} </td>
-        <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</td>
-    </tr>
-    {% endfor %}
-</table>
-
+        {% endfor %}
+    </table>
+</div>
 {# ページの表示 #}
 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
 

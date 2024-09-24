@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Category(models.Model):
     category_name = models.CharField(verbose_name="カテゴリ名",max_length=200)
@@ -135,7 +136,7 @@ class RestaurantBooking(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     start = models.DateTimeField(verbose_name='開始時間')
     end = models.DateTimeField('終了時間')
-    people_number = models.IntegerField(verbose_name='予約人数')
+    people_number = models.PositiveIntegerField(verbose_name='予約人数', validators=[MinValueValidator(1), MaxValueValidator(10)])
 
     def __str__(self):
         start = timezone.localtime(self.start).strftime('%Y/%m/%d %H:%M:%S')
