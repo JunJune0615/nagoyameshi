@@ -3,21 +3,25 @@
 {% block title %}店舗一覧{% endblock %}
 {% block content %}
 
-<h1>お気に入り店舗一覧</h1>
-<table border="3">
+<h1>予約店舗一覧</h1>
+<table border="3" class="table">
     <thead>
         <tr>
             <th>店舗名</th>
-            <th>カテゴリ</th>
-            <th>店舗画像</th>
+            <th>予約人数</th>
+            <th>予約開始時刻</th>
+            <th>予約人数の変更</th>
+            <th>キャンセル</th>
         </tr>
     </thead>
     <br>
-    {% for restaurant in object_list %}
+    {% for booking in object_list %}
     <tr>
-        <td><a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
-        <td>{{ restaurant.category }} </td>
-        <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</td>
+        <td><a href="{% url 'restaurant-detail' booking.restaurant.id %}">{{ booking.restaurant.restaurant_name }}</a></td>
+        <td>{{ booking.people_number }}</td>
+        <td>{{ booking.start }}</td>
+        <td><a href="{% url 'booking-update' pk=booking.pk %}">予約人数の変更</a></td>
+        <td><a href="{% url 'booking-delete' booking.pk %}">キャンセル</a></td>
     </tr>
     {% endfor %}
 </table>

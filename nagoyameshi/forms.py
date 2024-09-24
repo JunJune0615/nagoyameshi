@@ -3,7 +3,7 @@ from django.core.files.base import File
 from django.db.models.base import Model
 from django.forms import ModelForm
 from django.forms.utils import ErrorList
-from .models import CustomUser, Category, Review
+from .models import CustomUser, Category, Review, RestaurantBooking
 from django import forms
 
 class UserChangeForm(ModelForm):
@@ -45,4 +45,9 @@ class ReviewCreateForm(forms.ModelForm):
         model = Review
         fields = ['review', ]
 
-        
+
+class BookingForm(forms.ModelForm):   
+    class Meta:
+        model = RestaurantBooking
+        fields = ['people_number', ] 
+    

@@ -2,27 +2,32 @@
 {% block title %}ユーザー情報{% endblock %}
 {% block content %}
 <div>
+    <div><h3>ユーザー情報</h3></div>
     <div>
+        <div>E-mail：{{user.email}}</div>
+        <div>名前：{{user.username}}</div>
+        <a href="{% url 'profiel-change' %}">ユーザ名変更</a>
+    </div>
+    <a href="{% url 'account_change_password' %}">パスワード変更</a>
+     <div>
+        {% if user.vip_member %}
         <div>
-            <div>
-                <div><h3>ユーザー情報</h3></div>
-                <div>
-                    <div>E-mail：{{user.email}}</div>
-                    <div>名前：{{user.username}}</div>
-                    <a href="{% url 'top' %}">トップへ戻る</a>
-                    <a href="{% url 'profiel-change' %}">ユーザ名変更</a>
-                </div>
-                <a href="{% url 'account_change_password' %}">パスワード変更</a>
-                <div>
-                    {% if user.vip_member %}
-                    <a href="{% url 'credit-update' %}">クレジット変更</a>
-                    <a href="{% url 'subscription-cancel' %}">有料会員解除</a>
-                    {% else %}
-                    <a href="{% url 'credit-register' %}">有料会員になる</a>
-                    {% endif %}
-                </div>
-            </div>
+         <a href="{% url 'favorite-list' %}">お気に入り一覧はこちら</a>
         </div>
+        <div>
+            <a href="{% url 'booking-list' %}">予約一覧はこちら</a>
+        </div>
+        <div>
+            <a href="{% url 'credit-update' %}">クレジット変更</a>
+        </div>
+        <div>
+            <a href="{% url 'subscription-cancel' %}">有料会員解除</a>
+        </div>
+        {% else %}
+        <div>
+            <a href="{% url 'credit-register' %}">有料会員になる</a>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -14,5 +14,5 @@
     <textarea class="form-control" name="review" rows="3">{{ review.review }}</textarea>
     <input type="submit" value="更新">
 </form>
-<button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ review.restaurant }}の詳細に戻る</button>
+<a href="{% url 'restaurant-detail' restaurant.id %}">店舗の詳細に戻る</a>
 {% endblock %}

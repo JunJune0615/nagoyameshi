@@ -10,6 +10,7 @@
     <p>{{ review.restaurant }}へのレビューを削除しますか？</p>
     <button type="submit">削除</button>
 </form>
-
-<button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ review.restaurant }}の詳細に戻る</button>
+<br>
+<br>
+<a href="{% url 'restaurant-detail' restaurant.id %}">店舗の詳細に戻る</a>
 {% endblock %}
