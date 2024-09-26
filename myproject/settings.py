@@ -33,9 +33,9 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 
 if DEBUG:
-    ALLOWED_HOSTS = ['tabe-nagoyamesh.herokuapp.com']
+    ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+    ALLOWED_HOSTS = ['tabe-nagoyamesh.herokuapp.com']
 
 # Application definition
 
