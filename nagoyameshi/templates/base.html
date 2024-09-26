@@ -23,6 +23,7 @@
 {% else %}
   <a href="{% url 'account_login' %}">ログイン</a>
   <a href="{% url 'account_signup' %}">サインアップ</a>
+  <a href="{% url 'top' %}">トップへ戻る</a>
 {% endif %}
 
 {% for message in messages %}
