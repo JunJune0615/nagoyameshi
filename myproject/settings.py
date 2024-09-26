@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 
 if DEBUG:
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['<app-name>.herokuapp.com']
 else:
     ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
