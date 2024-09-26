@@ -49,6 +49,10 @@ INSTALLED_APPS = [
 
     'nagoyameshi',
 
+    # cloudinary
+    'cloudinary_storage',
+    'cloudinary',
+
     # ログイン機能のためのインストール
     'django.contrib.sites', # 追加
     'allauth', # 追加
@@ -176,13 +180,27 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/account/login/' #　ログアウト後のリダ�
 LOGIN_REDIRECT_URL = "/account/"
 LOGOUT_REDIRECT_URL = "/account/login/"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# メール送信設定
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = env('EMAIL_HOST')
+    EMAIL_PORT = env('EMAIL_PORT')
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # stripe
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_PRICE_ID = env('STRIPE_PRICE_ID')
 
-# 画像関連の設定
+# cloudinary
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media_local'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUD_NAME'),
+    'API_KEY': env('CLOUDINARY_API_KEY'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET')
+}
