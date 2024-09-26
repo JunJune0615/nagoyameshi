@@ -1,0 +1,26 @@
+<!-- ここを自分のbaseファイルに変える -->
+{% extends "base.html" %}
+<!-- これは翻訳機能 -->
+{% load i18n %}
+
+<!-- ヘッダーのタイトル -->
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<!-- ページに表示されるタイトル -->
+<h1>{% trans "Sign Up" %}</h1>
+
+<!-- テキスト -->
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<!-- フォーム -->
+<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <!-- ボタンのテキスト -->
+    <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+</form>
+{% endblock %}
