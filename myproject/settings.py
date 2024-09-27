@@ -35,7 +35,7 @@ DEBUG = env('DEBUG', default=False)
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS =  ['https://tabe-nagoyameshi-c796756aa16d.herokuapp.com']
+    ALLOWED_HOSTS =  ['https://tabe-nagoyameshi','.herokuapp.com']
 
 # Application definition
 
