@@ -4,20 +4,20 @@
 {% block content %}
 
 <h1>お気に入り店舗一覧</h1>
-<table border="3">
+<table class="table table-bordered table-hover table-condensed align-middle">
     <thead>
         <tr>
-            <th>店舗名</th>
-            <th>カテゴリ</th>
-            <th>店舗画像</th>
+            <th><p class="fs-4">店舗画像(クリックで詳細)</p></th>
+            <th><p class="fs-4">店舗名(クリックで詳細)</p></th>
+            <th><p class="fs-4">カテゴリ</p></th>
         </tr>
     </thead>
     <br>
     {% for restaurant in object_list %}
     <tr>
-        <td><a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
-        <td>{{ restaurant.category }} </td>
-        <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</td>
+        <td><a href="{% url 'restaurant-detail' restaurant.id %}">{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</a></td>
+        <td><p class="fs-3"><a href="{% url 'restaurant-detail' restaurant.id %}" class="text-decoration-none">{{ restaurant.restaurant_name }}</a></p></td>
+        <td><p class="fs-4">{{ restaurant.category }}</p> </td>
     </tr>
     {% endfor %}
 </table>
@@ -36,4 +36,6 @@
 <a href="?page={{ page_obj.next_page_number }}">次へ</a>
 <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
 {% endif %}
+<br>
+<a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>
 {% endblock %}

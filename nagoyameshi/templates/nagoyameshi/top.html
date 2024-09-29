@@ -7,45 +7,45 @@
     <div>
         店舗名
       {{ search_form.restaurant_name }}
-      <button type="submit">検索</button>
+      <button type="submit" class="btn btn-primary">検索</button>
     </div>
     <div>
         カテゴリ
       {{ search_form.category }}
     </div>
 </form>
-
 <div class="col-10 mx-auto">
-    <table border="3" class="table">
+    <table class="table table-bordered table-hover table-condensed align-middle">
         <thead>
             <tr>
-                <th>店舗名</th>
-                <th>カテゴリ</th>
-                <th>店舗画像</th>
+                <th><p class="fs-4">店舗画像(クリックで詳細)</p></th>
+                <th><p class="fs-4">店舗名(クリックで詳細)</p></th>
+                <th><p class="fs-4">カテゴリ</p></th>
             </tr>
         </thead>
         <br>
         {% for restaurant in object_list %}
         <tr>
-            <td><a href="{% url 'restaurant-detail' restaurant.id %}">{{ restaurant.restaurant_name }}</a></td>
-            <td>{{ restaurant.category }} </td>
-            <td>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</td>
+            <td><a href="{% url 'restaurant-detail' restaurant.id %}">{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</a></td>
+            <td><p class="fs-3"><a href="{% url 'restaurant-detail' restaurant.id %}" class="text-decoration-none">{{ restaurant.restaurant_name }}</a></p></td>
+            <td><p class="fs-4">{{ restaurant.category }}</p> </td>
         </tr>
         {% endfor %}
     </table>
 </div>
-{# ページの表示 #}
 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
-
-{# 前へ #}
-{% if page_obj.has_previous %}
-<a href="?page=1">&laquo; 先頭</a>
-<a href="?page={{ page_obj.previous_page_number }}">前へ</a>
-{% endif %}
-
-{# 次へ #}
-{% if page_obj.has_next %}
-<a href="?page={{ page_obj.next_page_number }}">次へ</a>
-<a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
-{% endif %}
+<ul class="pager list-unstyled">
+    {% if page_obj.has_previous %}
+        <li class="previous">
+            <a href="?page=1">&laquo; 先頭</a>
+            <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+        </li>
+    {% endif %}
+    {% if page_obj.has_next %}
+        <li class="next">
+            <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+        </li>
+    {% endif %}
+</ul>
 {% endblock %}

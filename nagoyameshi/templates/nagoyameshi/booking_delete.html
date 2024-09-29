@@ -8,9 +8,9 @@
 <form method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
     <p>{{ booking.restaurant }}：{{ booking.start }}からの予約をキャンセルしますか？</p>
-    <button type="submit">キャンセル</button>
+    <button type="submit" class="btn btn-danger">キャンセル</button>
 </form>
 <br>
 <br>
-<button onclick="location.href='{% url 'booking-list' %}'">予約一覧に戻る</button>
+<button onclick="location.href='{% url 'booking-list' %}'" class="btn btn-primary">予約一覧に戻る</button>
 {% endblock %}
