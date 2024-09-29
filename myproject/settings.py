@@ -179,7 +179,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # メール検証を必須とする
 LOGIN_URL = '/account/login/' # ログインURLの設定
 ACCOUNT_LOGOUT_REDIRECT_URL = '/account/login/' #　ログアウト後のリダイレクト先
 
-LOGIN_REDIRECT_URL = "/account/"
+LOGIN_REDIRECT_URL = "/profile/"
 LOGOUT_REDIRECT_URL = "/account/login/"
 
 # メール送信設定

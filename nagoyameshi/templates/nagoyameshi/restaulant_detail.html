@@ -1,58 +1,119 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ restaurant.restaurant_name }}{% endblock %}
+{% block title %}Nagoyameshi:{{ restaurant.restaurant_name }}{% endblock %}
+
 {% block content %}
-<h1>"{{ restaurant.restaurant_name }}"</h1>
-<div>{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:200px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:200px height:200px;">{% endif %}</div>
-<div>
-    <div>名前：{{ restaurant.restaurant_name }}</div>
-    <div>カテゴリ:{{ restaurant.category }} </div>
-    <div>予算:{{ restaurant.budget }} </div>
-    <div>定休日：{{ restaurant.get_closed_days }}</div>
-    <div>営業時間：{{ restaurant.get_businesshour }}</div>
-    <div>電話番号：{{ restaurant.tel }}</div>
-    <div>郵便番号：{{ restaurant.postal_number }}</div>
-    <div>住所：{{ restaurant.address }}</div>
-</div>
-<div>店舗説明</div>
-<div>{{ restaurant.information }}</div>
+<h3 class="h3">店舗内容</h3>
+<section>
+    <div class="container py-5 mb-5">
+        <div class="row">
+          <div class="col-lg-6 text-left">
+            <div class="py-5">
+                <h2 class="section_title about mb-5">
+                    {{ restaurant.restaurant_name }}
+                </h2>
+                <p class="my-0">
+                    カテゴリ:{{ restaurant.category }}<br>
+                    予算:{{ restaurant.budget }}<br>
+                    定休日：{{ restaurant.get_closed_days }}<br>
+                    営業時間：{{ restaurant.get_businesshour }}<br>
+                    電話番号：{{ restaurant.tel }}<br>
+                    郵便番号：{{ restaurant.postal_number }}<br>
+                    住所：{{ restaurant.address }}<br>
+                </p>
+            </div>
+          </div>
+            <div class="col-lg-6 text-left">
+                {% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:600px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:600px height:200px;">{% endif %}
+            </div> 
+        </div>
+      </div>
+</section>
+<h3 class="h3">店舗説明</h3>
+<p>{{ restaurant.information }}</p>
+<h3 class="h3">トップへ戻る</h3>
+<a href="{% url 'top' %}" class="btn btn-primary">トップへ戻る</a>
+<br>
+<br>
+<h3 class="h3">予約機能（有料会員限定）</h3>
 {% if user.vip_member %}
-    <button onclick="location.href='{% url 'calendar' restaurant.id %}'">{{ restaurant.restaurant_name }}の予約する</button>
+    <button onclick="location.href='{% url 'calendar' restaurant.id %}'" class="btn btn-primary">{{ restaurant.restaurant_name }}の予約する</button>
 {% else %}
-    <button onclick="location.href='{% url 'credit-register' %}'">店舗予約は有料会員へ</button>
+    <button onclick="location.href='{% url 'credit-register' %}'" class="btn btn-light">店舗予約は有料会員へ</button>
 {% endif %}
-<div>お気に入り（有料会員限定）</div>
+<br>
+<br>
+<h3 class="h3">お気に入り機能（有料会員限定）</h3>
 <form method="post" action="{% url 'toggle-favorite' restaurant.id %}">
     {% csrf_token %}
     {% if user.vip_member %}
         {% if favorite %}
-            <button type="submit" name="button">お気に入り解除</button>
+            <button type="submit" name="button" class="btn btn-danger">お気に入り解除</button>
         {% else %}
-            <button type="submit" name="button">お気に入り追加</button>
+            <button type="submit" name="button" class="btn btn-primary">お気に入り追加</button>
         {% endif %}
     {% else %}
-        <button type="submit" name="button">お気に入りは有料会員へ</button>
+        <button type="submit" name="button" class="btn btn-light">お気に入りは有料会員へ</button>
     {% endif %}
 </form>
-<div>レビュー投稿（有料会員限定）</div>
+<br>
+<h3 class="h3">レビュー投稿（有料会員限定）</h3>
 {% if user.vip_member %}
     {% if not is_review %}
-        <button onclick="location.href='{% url 'review-create' restaurant.id %}'">{{ restaurant.restaurant_name }}をレビューしませんか？</button>
+        <button onclick="location.href='{% url 'review-create' restaurant.id %}'" class="btn btn-primary">{{ restaurant.restaurant_name }}をレビューしませんか？</button>
+    {% else %}
+        <p>すでに投稿されています</p>
     {% endif %}
 {% else %}
-    <button onclick="location.href='{% url 'credit-register' %}'">レビューは有料会員へ</button>
+    <button onclick="location.href='{% url 'credit-register' %}'" class="btn btn-light">レビューは有料会員へ</button>
 {% endif %}
 <br>
 <br>
-{% for review in reviews %}
-    {% if review.user.id == request.user.id %}
-    <div>
-        {{ review.user.username }}のレビュー:{{ review.review }}
-        <button onclick="location.href='{% url 'review-update' review.pk %}'">編集</button>
-        <button onclick="location.href='{% url 'review-delete' review.pk %}'">削除</button>
-    </div>     
-    {% else %}
-        <div>{{ review.user.username }}のレビュー:{{ review.review }}</div>
-    {% endif %}
-{% endfor %}
+<div class="bg-dark">
+    <div class="container py-5 mb-5">
+        <div class="text-center mb-5">
+            <h2 class="section_title review text-center text-white">レビューの一覧</h2>
+            {% for review in reviews %}
+                {% if review.user.id == request.user.id %}
+                    <div class="row pb-5 justify-content-center">
+                        <div class="col-lg-5 mt-3">
+                            <div class="bg-white">
+                                <div class="p-4">
+                                    <div class="d-flex align-items-center">
+                                        <p class="my-0">あなた様のレビュー</p>
+                                        
+                                    </div>
+                                    <p>
+                                        {{ review.review }}
+                                    </p>
+                                    <button onclick="location.href='{% url 'review-update' review.pk %}'" class="btn btn-primary">編集</button>
+                                    <button onclick="location.href='{% url 'review-delete' review.pk %}'" class="btn btn-danger">削除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% for review in reviews %}
+                {% if review.user.id != request.user.id %}
+                    <div class="row pb-5 justify-content-center">
+                        <div class="col-lg-5 mt-3">
+                            <div class="bg-white">
+                                <div class="p-4">
+                                        <div class="d-flex align-items-center">
+                                            <p class="my-0">{{ review.user.username }}様のレビュー</p>
+                                            
+                                        </div>
+                                        <p>
+                                            {{ review.review }}
+                                        </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>    
+</div>
 {% endblock %}

@@ -53,10 +53,10 @@ class RestaurantDetailView(UserPassesTestMixin, View):
         return self.request.user.is_authenticated 
 
     def handle_no_permission(self):
-        return redirect('top')
+        return redirect('account_login')
     
     raise_exception = False
-    login_url = reverse_lazy('top')
+    login_url = reverse_lazy('account_login')
 
     model = Restaurant
 
@@ -131,6 +131,10 @@ class ReviewCreateView(UserPassesTestMixin, CreateView):
         review = form.save(commit=False)
         review.user = self.request.user
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "レビューを書いてください")
+        return redirect('top')
 
 
 class ReviewUpdateView(UserPassesTestMixin, UpdateView):
@@ -259,7 +263,7 @@ class CreditRegisterView(UserPassesTestMixin, View):
         custom_user.vip_member = True
         custom_user.save()
 
-        return redirect('top')
+        return redirect('profile')
 
 
 class SubscriptionCancelView(UserPassesTestMixin, View):
@@ -286,7 +290,7 @@ class SubscriptionCancelView(UserPassesTestMixin, View):
         custom_user.vip_member = False
         custom_user.save()
 
-        return redirect('top')
+        return redirect('profile')
 
 
 class CreditUpdateView(UserPassesTestMixin, View):
@@ -331,7 +335,7 @@ class CreditUpdateView(UserPassesTestMixin, View):
         custom_user.stripe_card_id = card.id
         custom_user.save()
 
-        return redirect('top')
+        return redirect('profile')
 
 
 class BookingCalendar(UserPassesTestMixin, TemplateView):

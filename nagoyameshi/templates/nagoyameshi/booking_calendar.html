@@ -2,6 +2,7 @@
 
 {% block content %}
     <h1>{{ restaurant.restaurant_name }}</h1>
+    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'" class="btn btn-primary">{{ restaurant.restaurant_name }}の詳細に戻る</button>
     <p>{{ start_day }} - {{ end_day }}</p>
     <table class="table table-bordered text-center" style="table-layout: fixed;width: 100%" border="1">
         <tr>
@@ -40,5 +41,4 @@
             </tr>
         {% endfor %}
     </table>
-    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'">{{ restaurant.restaurant_name }}の詳細に戻る</button>
 {% endblock %}

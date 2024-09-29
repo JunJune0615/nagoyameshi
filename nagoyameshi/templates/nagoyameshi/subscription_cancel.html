@@ -7,7 +7,8 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">解約</button>
     </form>
+    <br>
     <div>
-        <a href="{% url 'top' %}">トップへ戻る</a>
+        <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>
     </div>        
 {% endblock %}

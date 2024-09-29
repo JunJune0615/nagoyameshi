@@ -17,9 +17,11 @@
             {{ redirect_field }}
         {% endslot %}
         {% slot actions %}
-            {% element button type="submit" %}
+            {% element button type="submit" class="btn" %}
                 {% trans 'Sign Out' %}
             {% endelement %}
         {% endslot %}
     {% endelement %}
+    <br>
+    <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>
 {% endblock content %}

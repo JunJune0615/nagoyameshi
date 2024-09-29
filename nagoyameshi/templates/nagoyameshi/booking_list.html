@@ -2,42 +2,45 @@
 {% load static %}
 {% block title %}店舗一覧{% endblock %}
 {% block content %}
+    <h1>予約店舗一覧</h1>
+        <div class="col-10 mx-auto"></div>
+        <table class="table table-bordered table-hover table-condensed align-middle">
+            <thead>
+                <tr>
+                    <th><p class="fs-4">店舗名(クリックで詳細)</p></th>
+                    <th><p class="fs-4">予約人数</p></th>
+                    <th><p class="fs-4">予約開始時刻</p></th>
+                    <th><p class="fs-4">予約人数の変更</p></th>
+                    <th><p class="fs-4">キャンセル</p></th>
+                </tr>
+            </thead>
+            <br>
+            {% for booking in object_list %}
+            <tr>
+                <td><p class="fs-3"><a href="{% url 'restaurant-detail' booking.restaurant.id %}" class="text-decoration-none">{{ booking.restaurant.restaurant_name }}</a></p></td>
+                <td><p class="fs-3">{{ booking.people_number }}</p></td>
+                <td><p class="fs-3">{{ booking.start }}</p></td>
+                <td><p class="fs-3"><a href="{% url 'booking-update' pk=booking.pk %}" class="text-decoration-none">予約人数の変更</a></p></td>
+                <td><p class="fs-3"><a href="{% url 'booking-delete' booking.pk %}" class="text-decoration-none">キャンセル</a></p></td>
+            </tr>
+            {% endfor %}
+        </table>
 
-<h1>予約店舗一覧</h1>
-<table border="3" class="table">
-    <thead>
-        <tr>
-            <th>店舗名</th>
-            <th>予約人数</th>
-            <th>予約開始時刻</th>
-            <th>予約人数の変更</th>
-            <th>キャンセル</th>
-        </tr>
-    </thead>
-    <br>
-    {% for booking in object_list %}
-    <tr>
-        <td><a href="{% url 'restaurant-detail' booking.restaurant.id %}">{{ booking.restaurant.restaurant_name }}</a></td>
-        <td>{{ booking.people_number }}</td>
-        <td>{{ booking.start }}</td>
-        <td><a href="{% url 'booking-update' pk=booking.pk %}">予約人数の変更</a></td>
-        <td><a href="{% url 'booking-delete' booking.pk %}">キャンセル</a></td>
-    </tr>
-    {% endfor %}
-</table>
+        {# ページの表示 #}
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
 
-{# ページの表示 #}
-{{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
+        {# 前へ #}
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; 先頭</a>
+        <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+        {% endif %}
 
-{# 前へ #}
-{% if page_obj.has_previous %}
-<a href="?page=1">&laquo; 先頭</a>
-<a href="?page={{ page_obj.previous_page_number }}">前へ</a>
-{% endif %}
-
-{# 次へ #}
-{% if page_obj.has_next %}
-<a href="?page={{ page_obj.next_page_number }}">次へ</a>
-<a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
-{% endif %}
+        {# 次へ #}
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+        {% endif %}
+        <br>
+        <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>
+    </div>
 {% endblock %}

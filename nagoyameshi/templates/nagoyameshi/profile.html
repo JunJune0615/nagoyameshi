@@ -1,33 +1,60 @@
 {% extends 'base.html' %}
 {% block title %}ユーザー情報{% endblock %}
 {% block content %}
-<div>
-    <div><h3>ユーザー情報</h3></div>
-    <div>
-        <div>E-mail：{{user.email}}</div>
-        <div>名前：{{user.username}}</div>
-        <a href="{% url 'profiel-change' %}">ユーザ名変更</a>
-    </div>
-    <a href="{% url 'account_change_password' %}">パスワード変更</a>
-     <div>
+<div class="col-10 mx-auto"></div>
+    <h1>プロフィール</h1>
+    <table class="table table-bordered table-condensed align-middle">
+        <thead>
+            <tr>
+                <th class="table-dark"><p class="fs-4">ユーザ情報</p></th>
+            </tr>
+        </thead>
+        <br>
+        <tr>
+            <td>E-mail：{{user.email}}</td>
+        </tr>
+        <tr>
+            <td><div>名前：{{user.username}}</div></td>
+        </tr>
+        <thead>
+            <tr>
+                <th class="table-dark"><p class="fs-4">ユーザ情報の変更</p></th>
+            </tr>
+        </thead>
+        <br>
+        <tr>
+            <td><a href="{% url 'profiel-change' %}">ユーザ名変更</a></td>
+        </tr>
+        <tr>
+            <td><a href="{% url 'account_change_password' %}">パスワード変更</a></td>
+        </tr>
+        <tr>
+            <td><a href="{% url 'account_email' %}">メールアドレス変更</a></td>
+        </tr>
+        <thead></thead>
+            <tr>
+                <th class="table-dark"><p class="fs-4">有料会員機能</p></th>
+            </tr>
+        </thead>
+        <br>
         {% if user.vip_member %}
-        <div>
-         <a href="{% url 'favorite-list' %}">お気に入り一覧はこちら</a>
-        </div>
-        <div>
-            <a href="{% url 'booking-list' %}">予約一覧はこちら</a>
-        </div>
-        <div>
-            <a href="{% url 'credit-update' %}">クレジット変更</a>
-        </div>
-        <div>
-            <a href="{% url 'subscription-cancel' %}">有料会員解除</a>
-        </div>
+        <tr>
+            <td><a href="{% url 'favorite-list' %}">お気に入り一覧はこちら</a></td>
+        </tr>
+        <tr>
+            <td><a href="{% url 'booking-list' %}">予約一覧はこちら</a></td>
+        </tr>
+        <tr>
+            <td><a href="{% url 'credit-update' %}">クレジット変更</a></td>
+        </tr>
+        <tr>
+            <td><a href="{% url 'subscription-cancel' %}">有料会員解除</a></td>
+        </tr>
         {% else %}
-        <div>
-            <a href="{% url 'credit-register' %}">有料会員になる</a>
-        </div>
+        <tr>
+            <td><a href="{% url 'credit-register' %}">有料会員になる</a></td>
+        </tr>
         {% endif %}
-    </div>
+    </table>       
 </div>
 {% endblock %}
