@@ -3,7 +3,7 @@
 
 {% block content %}
     <h1 class="center">クレジット登録</h1>
-
+    <p class="fs-4">月300円で有料会員に登録すると予約やお気に入り登録ができます。</p>
     <div style="width: 600px; margin: auto;">
         <form action="{% url 'credit-register' %}" method="POST" id="payment-form">
             {% csrf_token %}
