@@ -2,14 +2,14 @@
  
 {% block title %}レビュー更新{% endblock %}
 {% block content %}
-<h1>予約人数更新</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>{{ booking.restaurant }}：{{ booking.start }}からの予約人数を選択してください</p>
-    {{ form }}
-    <button class="btn btn-primary" type="submit">変更</button>
-</form>
-<br>
-<br>
-<button onclick="location.href='{% url 'booking-list' %}'">予約一覧に戻る</button>
+    <h1>予約人数更新</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ booking.restaurant }}：{{ booking.start }}からの予約人数を選択してください</p>
+        {{ form }}
+        <button class="btn btn-primary" type="submit">変更</button>
+    </form>
+    <br>
+    <br>
+    <button onclick="location.href='{% url 'booking-list' %}'">予約一覧に戻る</button>
 {% endblock %}

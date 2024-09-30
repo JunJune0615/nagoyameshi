@@ -5,7 +5,6 @@
     <h1 class="center">クレジット変更</h1>
     <p>カードブランド： {{ card_brand }}</p>
     <p>カード番号： **** **** **** {{ card_last4 }}</p>
-
     <div style="width: 600px; margin: auto;">
         <form action="{% url 'credit-update' %}" method="POST" id="payment-form">
             {% csrf_token %}
@@ -24,7 +23,6 @@
             <button class="btn btn-primary">お支払い</button>
         </form>
     </div>
-
     <script>
         const stripe = Stripe('{{ stripe_public_key }}');
         const elements = stripe.elements();
@@ -34,11 +32,8 @@
             color: "#32325d",
           }
         };
-
         const card = elements.create('card', {style: style});
-
         card.mount('#card-element');
-
         card.addEventListener('change', function(event) {
         const displayError = document.getElementById('card-errors');
         if (event.error) {
@@ -47,7 +42,6 @@
         displayError.textContent = '';
         }
         });
-
         const form = document.getElementById('payment-form');
         form.addEventListener('submit', function(event) {
           event.preventDefault();
@@ -63,7 +57,6 @@
             }
           });
         });
-
         function stripeTokenHandler(token) {
           // tokenをフォームへ包含し送信
           const form = document.getElementById('payment-form');
@@ -72,11 +65,9 @@
           hiddenInput.setAttribute('name', 'stripeToken');
           hiddenInput.setAttribute('value', token.id);
           form.appendChild(hiddenInput);
-
           // Submit します
           form.submit();
         }
-
     </script>
     <br>
     <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>

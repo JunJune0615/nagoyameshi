@@ -38,22 +38,22 @@
         </thead>
         <br>
         {% if user.vip_member %}
-        <tr>
-            <td><a href="{% url 'favorite-list' %}">お気に入り一覧はこちら</a></td>
-        </tr>
-        <tr>
-            <td><a href="{% url 'booking-list' %}">予約一覧はこちら</a></td>
-        </tr>
-        <tr>
-            <td><a href="{% url 'credit-update' %}">クレジット変更</a></td>
-        </tr>
-        <tr>
-            <td><a href="{% url 'subscription-cancel' %}">有料会員解除</a></td>
-        </tr>
+            <tr>
+                <td><a href="{% url 'favorite-list' %}">お気に入り一覧はこちら</a></td>
+            </tr>
+            <tr>
+                <td><a href="{% url 'booking-list' %}">予約一覧はこちら</a></td>
+            </tr>
+            <tr>
+                <td><a href="{% url 'credit-update' %}">クレジット変更</a></td>
+            </tr>
+            <tr>
+                <td><a href="{% url 'subscription-cancel' %}">有料会員解除</a></td>
+            </tr>
         {% else %}
-        <tr>
-            <td><a href="{% url 'credit-register' %}">有料会員になる(月300円)</a></td>
-        </tr>
+            <tr>
+                <td><a href="{% url 'credit-register' %}">有料会員になる(月300円)</a></td>
+            </tr>
         {% endif %}
     </table>       
 </div>

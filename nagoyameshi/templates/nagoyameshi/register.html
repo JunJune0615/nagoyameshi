@@ -22,7 +22,6 @@
             <button>お支払い</button>
         </form>
     </div>
-
     <script>
         const stripe = Stripe('{{ stripe_public_key }}');
         const elements = stripe.elements();
@@ -61,7 +60,6 @@
             }
           });
         });
-
         function stripeTokenHandler(token) {
           // tokenをフォームへ包含し送信
           const form = document.getElementById('payment-form');
@@ -70,7 +68,6 @@
           hiddenInput.setAttribute('name', 'stripeToken');
           hiddenInput.setAttribute('value', token.id);
           form.appendChild(hiddenInput);
-
           // Submit します
           form.submit();
         }
