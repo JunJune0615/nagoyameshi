@@ -39,7 +39,7 @@
 {% if user.vip_member %}
     <button onclick="location.href='{% url 'calendar' restaurant.id %}'" class="btn btn-primary">{{ restaurant.restaurant_name }}の予約する</button>
 {% else %}
-    <button onclick="location.href='{% url 'credit-register' %}'" class="btn btn-light">店舗予約は有料会員へ</button>
+    <button onclick="location.href='{% url 'credit-register' %}'" class="btn btn-primary">店舗予約は有料会員へ</button>
 {% endif %}
 <br>
 <br>
@@ -53,7 +53,7 @@
             <button type="submit" name="button" class="btn btn-primary">お気に入り追加</button>
         {% endif %}
     {% else %}
-        <button type="submit" name="button" class="btn btn-light">お気に入りは有料会員へ</button>
+        <button type="submit" name="button" class="btn btn-primary">お気に入りは有料会員へ</button>
     {% endif %}
 </form>
 <br>
@@ -65,7 +65,7 @@
         <p>すでに投稿されています</p>
     {% endif %}
 {% else %}
-    <button onclick="location.href='{% url 'credit-register' %}'" class="btn btn-light">レビューは有料会員へ</button>
+    <button onclick="location.href='{% url 'credit-register' %}'" class="btn btn-primary">レビューは有料会員へ</button>
 {% endif %}
 <br>
 <br>
