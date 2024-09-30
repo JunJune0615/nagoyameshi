@@ -83,7 +83,6 @@ class Restaurant(models.Model):
     def get_businesshour(self):
         return  f"{self.open_time}～{self.close_time}" 
     
-
     def __str__(self):
         return self.restaurant_name
 
