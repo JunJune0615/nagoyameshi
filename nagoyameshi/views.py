@@ -438,6 +438,7 @@ class Booking(UserPassesTestMixin, CreateView):
         hour = self.kwargs.get('hour')
         start = datetime.datetime(year=year, month=month, day=day, hour=hour)
         end = datetime.datetime(year=year, month=month, day=day, hour=hour + 1)
+        today = datetime.date.today()
         
         open_time = restaurant.open_time
         close_time = restaurant.close_time
@@ -454,8 +455,10 @@ class Booking(UserPassesTestMixin, CreateView):
         
         if RestaurantBooking.objects.filter(restaurant=restaurant, start=start).exists():
             messages.error(self.request, '入れ違いで予約がありました。お手数をおかけしますが別の日時を選択してください。')
+        elif start.date() <= today:
+            messages.error(self.request, '予約日時は翌日以降にしてください。')
         elif (open_hour > hour and hour >= start_hour_false) or (end_hour <= hour and hour < finish_hour_false):
-            messages.error(self.request, '不正の時間帯です。')
+            messages.error(self.request, '予約時間は営業時間内にしてください。')
         else:
             booking = form.save(commit=False)
             booking.user = self.request.user

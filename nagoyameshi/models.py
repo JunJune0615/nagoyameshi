@@ -40,6 +40,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class Restaurant(models.Model):
     restaurant_name = models.CharField(verbose_name="店舗名", max_length=200)
     budget = models.PositiveIntegerField(verbose_name="予算")
@@ -129,6 +130,7 @@ class FavoriteRestaurant(models.Model):
     
     class Meta:
         unique_together = ('restaurant', 'user')
+
 
 class RestaurantBooking(models.Model):
     create_date = models.DateField(verbose_name="作成日時", auto_now_add=True)
