@@ -2,13 +2,13 @@
  
 {% block title %}レビュー削除{% endblock %}
 {% block content %}
-<h1>レビュー削除</h1>
-<form method="post" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>{{ review.restaurant }}へのレビューを削除しますか？</p>
-    <button type="submit" class="btn btn-danger">削除</button>
-</form>
-<br>
-<button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'" class="btn btn-primary">{{ restaurant.restaurant_name }}の詳細に戻る</button>
-<br>
+    <h1>レビュー削除</h1>
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ review.restaurant }}へのレビューを削除しますか？</p>
+        <button type="submit" class="btn btn-danger">削除</button>
+    </form>
+    <br>
+    <button onclick="location.href='{% url 'restaurant-detail' restaurant.id %}'" class="btn btn-primary">{{ restaurant.restaurant_name }}の詳細に戻る</button>
+    <br>
 {% endblock %}

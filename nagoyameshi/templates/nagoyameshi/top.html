@@ -2,50 +2,50 @@
 {% load static %}
 {% block title %}店舗一覧{% endblock %}
 {% block content %}
-<h1>名古屋の店舗一覧</h1>
-<form class="mt-2" id="search-form" action="" method="GET">
-    <div>
-        店舗名
-      {{ search_form.restaurant_name }}
-      <button type="submit" class="btn btn-primary">検索</button>
+    <h1>名古屋の店舗一覧</h1>
+    <form class="mt-2" id="search-form" action="" method="GET">
+        <div>
+            店舗名
+            {{ search_form.restaurant_name }}
+            <button type="submit" class="btn btn-primary">検索</button>
+        </div>
+        <div>
+            カテゴリ
+            {{ search_form.category }}
+        </div>
+    </form>
+    <div class="col-10 mx-auto">
+        <table class="table table-bordered table-hover table-condensed align-middle">
+            <thead>
+                <tr>
+                    <th><p class="fs-4">店舗画像(クリックで詳細)</p></th>
+                    <th><p class="fs-4">店舗名(クリックで詳細)</p></th>
+                    <th><p class="fs-4">カテゴリ</p></th>
+                </tr>
+            </thead>
+            <br>
+            {% for restaurant in object_list %}
+                <tr>
+                    <td><a href="{% url 'restaurant-detail' restaurant.id %}">{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</a></td>
+                    <td><p class="fs-3"><a href="{% url 'restaurant-detail' restaurant.id %}" class="text-decoration-none">{{ restaurant.restaurant_name }}</a></p></td>
+                    <td><p class="fs-4">{{ restaurant.category }}</p> </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
-    <div>
-        カテゴリ
-      {{ search_form.category }}
-    </div>
-</form>
-<div class="col-10 mx-auto">
-    <table class="table table-bordered table-hover table-condensed align-middle">
-        <thead>
-            <tr>
-                <th><p class="fs-4">店舗画像(クリックで詳細)</p></th>
-                <th><p class="fs-4">店舗名(クリックで詳細)</p></th>
-                <th><p class="fs-4">カテゴリ</p></th>
-            </tr>
-        </thead>
-        <br>
-        {% for restaurant in object_list %}
-        <tr>
-            <td><a href="{% url 'restaurant-detail' restaurant.id %}">{% if restaurant.img %}<img src="{{ restaurant.img.url }}" style="width:400px; height:auto;">{% else %}<img src="{% static 'image/noImage.png' %}" style="width:400px; height:auto;">{% endif %}</a></td>
-            <td><p class="fs-3"><a href="{% url 'restaurant-detail' restaurant.id %}" class="text-decoration-none">{{ restaurant.restaurant_name }}</a></p></td>
-            <td><p class="fs-4">{{ restaurant.category }}</p> </td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
-{{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
-<ul class="pager list-unstyled">
-    {% if page_obj.has_previous %}
-        <li class="previous">
-            <a href="?page=1">&laquo; 先頭</a>
-            <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
-        </li>
-    {% endif %}
-    {% if page_obj.has_next %}
-        <li class="next">
-            <a href="?page={{ page_obj.next_page_number }}">次へ</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
-        </li>
-    {% endif %}
-</ul>
+    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
+    <ul class="pager list-unstyled">
+        {% if page_obj.has_previous %}
+            <li class="previous">
+                <a href="?page=1">&laquo; 先頭</a>
+                <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+            </li>
+        {% endif %}
+        {% if page_obj.has_next %}
+            <li class="next">
+                <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+            </li>
+        {% endif %}
+    </ul>
 {% endblock %}

@@ -18,7 +18,6 @@
             {% endfor %}
             <td><a href="{% url 'calendar' restaurant.id next.year next.month next.day %}">次週</a></td>
         </tr>
-
         {% for hour, schedules in calendar.items %}
             <tr style="font-size:12px">
                 <td>

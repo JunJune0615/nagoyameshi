@@ -2,20 +2,18 @@
  
 {% block title %}レビュー更新{% endblock %}
 {% block content %}
-<h1>レビュー更新</h1>
- 
-<div>
-    <div>ユーザ名：{{ user.username }}</div>
-    <div>レビュー先：{{ review.restaurant }}</div>
-</div>
-
-<form method="post" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-    <textarea class="form-control" name="review" rows="3">{{ review.review }}</textarea>
+    <h1>レビュー更新</h1>
+    <div>
+        <div>ユーザ名：{{ user.username }}</div>
+        <div>レビュー先：{{ review.restaurant }}</div>
+    </div>
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea class="form-control" name="review" rows="3">{{ review.review }}</textarea>
+        <br>
+        <input type="submit" class="btn btn-primary" value="更新">
+    </form>
     <br>
-    <input type="submit" class="btn btn-primary" value="更新">
-</form>
-<br>
-<br>
-<a href="{% url 'restaurant-detail' restaurant.id %}" class="btn btn-primary">店舗の詳細に戻る</a>
+    <br>
+    <a href="{% url 'restaurant-detail' restaurant.id %}" class="btn btn-primary">店舗の詳細に戻る</a>
 {% endblock %}

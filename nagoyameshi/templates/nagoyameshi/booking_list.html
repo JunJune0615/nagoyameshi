@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load static %}
 {% block title %}店舗一覧{% endblock %}
 {% block content %}
@@ -16,29 +17,26 @@
             </thead>
             <br>
             {% for booking in object_list %}
-            <tr>
-                <td><p class="fs-3"><a href="{% url 'restaurant-detail' booking.restaurant.id %}" class="text-decoration-none">{{ booking.restaurant.restaurant_name }}</a></p></td>
-                <td><p class="fs-3">{{ booking.people_number }}</p></td>
-                <td><p class="fs-3">{{ booking.start }}</p></td>
-                <td><p class="fs-3"><a href="{% url 'booking-update' pk=booking.pk %}" class="text-decoration-none">予約人数の変更</a></p></td>
-                <td><p class="fs-3"><a href="{% url 'booking-delete' booking.pk %}" class="text-decoration-none">キャンセル</a></p></td>
-            </tr>
+                <tr>
+                    <td><p class="fs-3"><a href="{% url 'restaurant-detail' booking.restaurant.id %}" class="text-decoration-none">{{ booking.restaurant.restaurant_name }}</a></p></td>
+                    <td><p class="fs-3">{{ booking.people_number }}</p></td>
+                    <td><p class="fs-3">{{ booking.start }}</p></td>
+                    <td><p class="fs-3"><a href="{% url 'booking-update' pk=booking.pk %}" class="text-decoration-none">予約人数の変更</a></p></td>
+                    <td><p class="fs-3"><a href="{% url 'booking-delete' booking.pk %}" class="text-decoration-none">キャンセル</a></p></td>
+                </tr>
             {% endfor %}
         </table>
-
         {# ページの表示 #}
         {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} ページ<br>
-
         {# 前へ #}
         {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; 先頭</a>
-        <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+            <a href="?page=1">&laquo; 先頭</a>
+            <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
         {% endif %}
-
         {# 次へ #}
         {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">次へ</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">最後 &raquo;</a>
         {% endif %}
         <br>
         <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>

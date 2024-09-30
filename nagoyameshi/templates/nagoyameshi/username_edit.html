@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}ユーザ情報の変更{% endblock %}
 {% block content %}
-<div class="ui grid stackable">
-    <div class="eleven wide column">
-        <div class="ui segment">
-            <div class="content">
-                <div class="header"><h3>ユーザー情報の変更</h3></div>
-                <form class="ui form" action="" method="POST">
-                    {% csrf_token %}
-                    {{form.as_p}}
-                    <button class="btn btn-primary" type="submit">確認</button>
-                </form>
+    <div class="ui grid stackable">
+        <div class="eleven wide column">
+            <div class="ui segment">
+                <div class="content">
+                    <div class="header"><h3>ユーザー情報の変更</h3></div>
+                    <form class="ui form" action="" method="POST">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <button class="btn btn-primary" type="submit">確認</button>
+                    </form>
+                </div>
             </div>
+            <br>
+            <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>
         </div>
-        <br>
-        <a href="{% url 'profile' %}" class="btn btn-primary">プロフィールに戻る</a>
     </div>
-</div>
 {% endblock %}

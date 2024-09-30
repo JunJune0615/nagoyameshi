@@ -107,6 +107,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     #一意の識別子として使用されます
     USERNAME_FIELD = 'email'
+
     #ユーザーを作成するときにプロンプ​​トに表示されるフィールド名のリストです。
     REQUIRED_FIELDS = ['username']
 
@@ -143,4 +144,3 @@ class RestaurantBooking(models.Model):
         start = timezone.localtime(self.start).strftime('%Y/%m/%d %H:%M:%S')
         end = timezone.localtime(self.end).strftime('%Y/%m/%d %H:%M:%S')
         return f'{self.restaurant} {start} ~ {end}'
-
