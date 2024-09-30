@@ -86,8 +86,10 @@
                                     <p>
                                         {{ review.review }}
                                     </p>
-                                    <button onclick="location.href='{% url 'review-update' review.pk %}'" class="btn btn-primary">編集</button>
-                                    <button onclick="location.href='{% url 'review-delete' review.pk %}'" class="btn btn-danger">削除</button>
+                                    {% if user.vip_member %}
+                                        <button onclick="location.href='{% url 'review-update' review.pk %}'" class="btn btn-primary">編集</button>
+                                        <button onclick="location.href='{% url 'review-delete' review.pk %}'" class="btn btn-danger">削除</button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
