@@ -30,7 +30,7 @@
         </div>
     </section>
     <h3 class="h3">店舗説明</h3>
-    <p>{{ restaurant.information }}</p>
+    <p>{{ restaurant.information| linebreaksbr }}</p>
     <h3 class="h3">トップへ戻る</h3>
     <a href="{% url 'top' %}" class="btn btn-primary">トップへ戻る</a>
     <br>
@@ -83,7 +83,7 @@
                                             <p class="my-0">あなた様のレビュー</p>
                                         </div>
                                         <p>
-                                            {{ review.review }}
+                                            {{ review.review| linebreaksbr }}
                                         </p>
                                         {% if user.vip_member %}
                                             <button onclick="location.href='{% url 'review-update' review.pk %}'" class="btn btn-primary">編集</button>
@@ -105,7 +105,7 @@
                                             <p class="my-0">{{ review.user.username }}様のレビュー</p>   
                                         </div>
                                         <p>
-                                            {{ review.review }}
+                                            {{ review.review| linebreaksbr }}
                                         </p>
                                     </div>
                                 </div>
