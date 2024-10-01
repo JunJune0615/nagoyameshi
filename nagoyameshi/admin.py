@@ -15,6 +15,7 @@ class RestaurantAdmin(admin.ModelAdmin):
     list_display = ('id', 'restaurant_name', 'create_date')
     search_fields = ('restaurant_name',)
 
+
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)
